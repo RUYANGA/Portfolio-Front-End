@@ -2944,3 +2944,55 @@ html.has-modal {
 .contact-panel .copy-tooltip::after {
   border-top-color: #fff;
 }
+
+/* ---------- Theme menu (System / Light / Dark) ---------- */
+.theme-menu {
+  position: relative;
+}
+
+.theme-menu-list {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  right: 0;
+  z-index: 60;
+  display: grid;
+  gap: 2px;
+  min-width: 150px;
+  padding: 0.3rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  box-shadow: var(--shadow-md);
+  animation: enter-up 0.16s var(--ease);
+}
+
+.theme-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0.5rem 0.6rem;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: var(--ink-2);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+}
+
+.theme-menu-item:hover {
+  background: var(--surface-2);
+  color: var(--ink);
+}
+
+.theme-menu-item.is-active {
+  color: var(--ink);
+}
+
+.theme-menu-item svg:last-child:not(:first-child) {
+  margin-left: auto;
+  color: var(--accent-text);
+}
