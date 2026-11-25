@@ -327,3 +327,20 @@ export const Reply = (p: IconProps) => (
     <path d="M20 18v-2a4 4 0 0 0-4-4H4" />
   </Svg>
 );
+
+export const ChevronRight = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="m9 18 6-6-6-6" />
+  </Svg>
+);
+export const Star = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M12 2.5l2.94 5.96 6.56.95-4.75 4.63 1.12 6.53L12 17.5l-5.87 3.07 1.12-6.53L2.5 9.41l6.56-.95L12 2.5z" />
+  </Svg>
+);
+export const Globe = (p: IconProps) => (
+  <Svg {...p}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18" />
+  </Svg>
+);
