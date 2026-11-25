@@ -1,19 +1,42 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
-import { ArrowUpRight, ChevronDown, ChevronUp, Pencil, Plus, Search, Trash } from "@/components/ui/Icons";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { ArrowUpRight, ChevronDown, ChevronUp, Eye, Pencil, Plus, Search, Trash, XIcon } from "@/components/ui/Icons";
 import { adminFetch, ApiError } from "@/lib/admin/client";
-import { getResource, type Record_ } from "@/lib/admin/resources";
+import { getResource, type Field, type Record_ } from "@/lib/admin/resources";
 import { useFeedback } from "./Feedback";
 
-/** Table of a resource's records with search, reordering, edit and delete. */
+const PREVIEW_TYPES = new Set(["text", "textarea", "url", "email", "number", "select", "tags", "lines", "checkbox", "slug"]);
+
+/** A record's value as display text for the preview dialog; empty values return "". */
+function displayValue(field: Field, value: unknown): string {
+  if (value === null || value === undefined || value === "") return "";
+  if (field.type === "checkbox") return value ? "Yes" : "No";
+  if (field.type === "select") return field.options?.find((o) => o.value === value)?.label ?? String(value);
+  if (Array.isArray(value)) return value.join(field.type === "lines" ? "\n" : ", ");
+  return String(value);
+}
+
+/** Table of a resource's records with search, reordering, preview, edit and delete. */
 export default function ResourceList({ resourceKey }: { resourceKey: string }) {
   const resource = getResource(resourceKey)!;
   const { toast, confirm } = useFeedback();
   const [items, setItems] = useState<Record_[] | null>(null);
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
+  const [preview, setPreview] = useState<Record_ | null>(null);
+  const previewDialog = useRef<HTMLDialogElement>(null);
+
+  function openPreview(item: Record_) {
+    setPreview(item);
+    requestAnimationFrame(() => previewDialog.current?.showModal());
+  }
+
+  function closePreview() {
+    previewDialog.current?.close();
+    setPreview(null);
+  }
 
   useEffect(() => {
     adminFetch<Record_[]>(`${resource.endpoint}/`)
@@ -52,6 +75,7 @@ export default function ResourceList({ resourceKey }: { resourceKey: string }) {
       danger: true,
     });
     if (!ok) return;
+    closePreview();
     try {
       await adminFetch(`${resource.endpoint}/${item.id}/`, { method: "DELETE" });
       setItems((list) => list?.filter((i) => i.id !== item.id) ?? null);
@@ -130,10 +154,10 @@ export default function ResourceList({ resourceKey }: { resourceKey: string }) {
                   </div>
                 )}
                 {resource.thumbField && (
-                  <span className="adm-thumb">
+                  <button type="button" className="adm-thumb" onClick={() => openPreview(item)} aria-label={`Preview ${String(item[resource.titleField] || resource.singular)}`}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     {thumb ? <img src={thumb} alt="" loading="lazy" /> : <span>No image</span>}
-                  </span>
+                  </button>
                 )}
                 <Link href={`/admin/${resource.key}/${item.id}`} className="adm-row-main">
                   <strong>{String(item[resource.titleField] || "Untitled")}</strong>
@@ -147,6 +171,9 @@ export default function ResourceList({ resourceKey }: { resourceKey: string }) {
                   ))}
                 </div>
                 <div className="adm-row-actions">
+                  <button type="button" className="adm-icon-btn" onClick={() => openPreview(item)} aria-label="Preview" title="Preview">
+                    <Eye size={16} />
+                  </button>
                   {publicPath && (
                     <a className="adm-icon-btn" href={publicPath} target="_blank" rel="noreferrer" aria-label="View on site" title="View on site">
                       <ArrowUpRight size={16} />
@@ -164,6 +191,80 @@ export default function ResourceList({ resourceKey }: { resourceKey: string }) {
           })}
         </ul>
       )}
+      <dialog ref={previewDialog} className="adm-dialog adm-preview" onCancel={(e) => (e.preventDefault(), closePreview())} onClick={(e) => e.target === e.currentTarget && closePreview()} aria-labelledby="adm-preview-title">
+        {preview && (() => {
+          const title = String(preview[resource.titleField] || "Untitled");
+          const thumb = resource.thumbField ? (preview[resource.thumbField] as string | null) : null;
+          const publicPath = resource.publicPath?.(preview);
+          const subtitle = resource.subtitle?.(preview) || "";
+          const rows = resource.sections
+            .flatMap((section) => section.fields)
+            .filter((f) => PREVIEW_TYPES.has(f.type) && f.name !== resource.titleField)
+            .map((f) => ({ field: f, text: displayValue(f, preview[f.name]) }))
+            .filter((r) => r.text && r.text !== subtitle);
+          return (
+            <>
+              <header className="adm-preview-head">
+                <div>
+                  <p className="adm-preview-kicker">{resource.singular}</p>
+                  <h2 id="adm-preview-title">{title}</h2>
+                  {subtitle && <p className="adm-preview-sub">{subtitle}</p>}
+                </div>
+                <button type="button" className="adm-icon-btn" onClick={closePreview} aria-label="Close">
+                  <XIcon size={16} />
+                </button>
+              </header>
+              <div className="adm-preview-body">
+                {thumb && (
+                  <div className="adm-preview-media">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={thumb} alt="" />
+                  </div>
+                )}
+                {!!resource.badges?.(preview).length && (
+                  <div className="adm-row-badges adm-preview-badges">
+                    {resource.badges(preview).map((b) => (
+                      <span key={b.text} className={`adm-badge is-${b.tone || "muted"}`}>
+                        {b.text}
+                      </span>
+                    ))}
+                  </div>
+                )}
+                <dl className="adm-preview-fields">
+                  {rows.map(({ field, text }) => (
+                    <div key={field.name} className={field.type === "textarea" || field.type === "lines" ? "is-long" : ""}>
+                      <dt>{field.label}</dt>
+                      <dd>
+                        {field.type === "url" ? (
+                          <a href={text} target="_blank" rel="noreferrer">
+                            {text.replace(/^https?:\/\//, "")}
+                          </a>
+                        ) : (
+                          text
+                        )}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+              <footer className="adm-dialog-foot adm-preview-foot">
+                <button type="button" className="button button-secondary button-sm adm-text-danger" onClick={() => remove(preview)} aria-label="Delete">
+                  <Trash size={14} /> <span className="adm-hide-sm">Delete</span>
+                </button>
+                <span className="adm-preview-spacer" />
+                {publicPath && (
+                  <a className="button button-secondary button-sm" href={publicPath} target="_blank" rel="noreferrer">
+                    View on site <ArrowUpRight size={14} />
+                  </a>
+                )}
+                <Link href={`/admin/${resource.key}/${preview.id}`} className="button button-primary button-sm">
+                  <Pencil size={14} /> Edit
+                </Link>
+              </footer>
+            </>
+          );
+        })()}
+      </dialog>
     </div>
   );
 }

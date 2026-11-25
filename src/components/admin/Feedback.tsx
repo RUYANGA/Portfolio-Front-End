@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
-import { AlertCircle, Check, Clock, XIcon } from "@/components/ui/Icons";
+import { AlertCircle, Check, Clock, Trash, XIcon } from "@/components/ui/Icons";
 
 type Tone = "success" | "error" | "info";
 type Toast = { id: number; message: string; tone: Tone };
@@ -125,12 +125,22 @@ export function FeedbackProvider({ children }: { children: React.ReactNode }) {
         ))}
       </div>
 
-      <dialog ref={dialog} className="adm-dialog" onCancel={(e) => (e.preventDefault(), settle(false))}>
+      <dialog ref={dialog} className="adm-dialog" onCancel={(e) => (e.preventDefault(), settle(false))} aria-labelledby="adm-confirm-title" aria-describedby="adm-confirm-text">
         {pending && (
-          <div className="adm-dialog-body">
-            <h2>{pending.title}</h2>
-            {pending.message && <p>{pending.message}</p>}
-            <div className="adm-dialog-actions">
+          <>
+            <div className="adm-dialog-body adm-confirm">
+              <span className={`adm-dialog-icon${pending.danger ? " is-danger" : ""}`} aria-hidden="true">
+                {pending.danger ? <Trash size={19} /> : <AlertCircle size={20} />}
+              </span>
+              <div>
+                <h2 id="adm-confirm-title">{pending.title}</h2>
+                {pending.message && <p id="adm-confirm-text">{pending.message}</p>}
+              </div>
+              <button type="button" className="adm-icon-btn adm-dialog-close" onClick={() => settle(false)} aria-label="Close">
+                <XIcon size={16} />
+              </button>
+            </div>
+            <div className="adm-dialog-foot">
               <button type="button" className="button button-secondary button-sm" onClick={() => settle(false)}>
                 Cancel
               </button>
@@ -143,7 +153,7 @@ export function FeedbackProvider({ children }: { children: React.ReactNode }) {
                 {pending.confirmLabel || "Confirm"}
               </button>
             </div>
-          </div>
+          </>
         )}
       </dialog>
       <dialog ref={expiredDialog} className="adm-dialog" onCancel={(e) => e.preventDefault()} aria-labelledby="session-expired-title">
