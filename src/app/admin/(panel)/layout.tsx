@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import AdminShell from "@/components/admin/AdminShell";
+import AdminShell, { type NavCounts } from "@/components/admin/AdminShell";
 import { currentAdmin, djangoAdmin } from "@/lib/admin/session";
 
 export const dynamic = "force-dynamic";
@@ -9,21 +9,21 @@ export default async function PanelLayout({ children }: { children: React.ReactN
   const user = await currentAdmin();
   if (!user) redirect("/admin/login");
 
-  let unread = 0;
+  let counts: NavCounts = {};
   let owner = "";
   try {
     const res = await djangoAdmin("overview/");
     if (res.ok) {
       const data = await res.json();
-      unread = data.counts.unread_messages;
+      counts = data.counts;
       owner = data.profile.name;
     }
   } catch {
-    /* the badge is optional */
+    /* the counts are optional */
   }
 
   return (
-    <AdminShell user={user} owner={owner} unread={unread}>
+    <AdminShell user={user} owner={owner} counts={counts}>
       {children}
     </AdminShell>
   );

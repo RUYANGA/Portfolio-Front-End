@@ -7,6 +7,7 @@ import {
   ArrowUpRight,
   Award,
   Briefcase,
+  ChevronRight,
   Code,
   Folder,
   GraduationCap,
@@ -20,18 +21,54 @@ import ThemeToggle from "@/components/ui/ThemeToggle";
 import type { AdminUser } from "@/lib/admin/session";
 import { FeedbackProvider, useFeedback } from "./Feedback";
 
-const NAV = [
-  { href: "/admin", label: "Overview", icon: LayoutGrid, exact: true },
-  { href: "/admin/profile", label: "Profile & site text", icon: UserIcon },
-  { href: "/admin/projects", label: "Projects", icon: Folder },
-  { href: "/admin/experience", label: "Experience", icon: Briefcase },
-  { href: "/admin/skills", label: "Skills", icon: Code },
-  { href: "/admin/education", label: "Education", icon: GraduationCap },
-  { href: "/admin/certifications", label: "Certifications", icon: Award },
-  { href: "/admin/messages", label: "Messages", icon: InboxIcon, badge: true },
+export type NavCounts = Partial<Record<"projects" | "experiences" | "skill_groups" | "education" | "certifications" | "unread_messages", number>>;
+
+type NavItem = { href: string; label: string; icon: (p: { size?: number }) => JSX.Element; exact?: boolean; count?: keyof NavCounts; badge?: boolean };
+
+const NAV: { title: string; items: NavItem[] }[] = [
+  {
+    title: "General",
+    items: [
+      { href: "/admin", label: "Overview", icon: LayoutGrid, exact: true },
+      { href: "/admin/messages", label: "Messages", icon: InboxIcon, count: "unread_messages", badge: true },
+    ],
+  },
+  {
+    title: "Content",
+    items: [
+      { href: "/admin/profile", label: "Profile & site text", icon: UserIcon },
+      { href: "/admin/projects", label: "Projects", icon: Folder, count: "projects" },
+      { href: "/admin/experience", label: "Experience", icon: Briefcase, count: "experiences" },
+      { href: "/admin/skills", label: "Skills", icon: Code, count: "skill_groups" },
+      { href: "/admin/education", label: "Education", icon: GraduationCap, count: "education" },
+      { href: "/admin/certifications", label: "Certifications", icon: Award, count: "certifications" },
+    ],
+  },
 ];
 
-export default function AdminShell(props: { user: AdminUser; owner: string; unread: number; children: React.ReactNode }) {
+const LABELS: Record<string, string> = {
+  profile: "Profile & site text",
+  projects: "Projects",
+  experience: "Experience",
+  skills: "Skills",
+  education: "Education",
+  certifications: "Certifications",
+  messages: "Messages",
+  account: "Account",
+  new: "New",
+};
+
+/** /admin/projects/12 → Dashboard › Projects › Edit */
+function breadcrumbs(pathname: string) {
+  const parts = pathname.replace(/^\/admin\/?/, "").split("/").filter(Boolean);
+  const crumbs = [{ href: "/admin", label: parts.length ? "Dashboard" : "Overview" }];
+  parts.forEach((part, i) => {
+    crumbs.push({ href: `/admin/${parts.slice(0, i + 1).join("/")}`, label: LABELS[part] || (i > 0 ? "Edit" : part) });
+  });
+  return crumbs;
+}
+
+export default function AdminShell(props: { user: AdminUser; owner: string; counts: NavCounts; children: React.ReactNode }) {
   return (
     <FeedbackProvider>
       <Shell {...props} />
@@ -39,8 +76,9 @@ export default function AdminShell(props: { user: AdminUser; owner: string; unre
   );
 }
 
-function Shell({ user, owner, unread, children }: { user: AdminUser; owner: string; unread: number; children: React.ReactNode }) {
-  const initials = owner.split(" ").filter(Boolean).slice(0, 2).map((w) => w[0]?.toUpperCase()).join("") || "P";
+function Shell({ user, owner, counts, children }: { user: AdminUser; owner: string; counts: NavCounts; children: React.ReactNode }) {
+  const displayName = owner || user.name;
+  const initials = displayName.split(" ").filter(Boolean).slice(0, 2).map((w) => w[0]?.toUpperCase()).join("") || "P";
   const pathname = usePathname();
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -60,62 +98,91 @@ function Shell({ user, owner, unread, children }: { user: AdminUser; owner: stri
   }
 
   const isActive = (href: string, exact?: boolean) => (exact ? pathname === href : pathname === href || pathname.startsWith(`${href}/`));
+  const crumbs = breadcrumbs(pathname);
 
   return (
-    <>
-      <div className={`adm-shell${open ? " is-nav-open" : ""}`}>
-        <aside className="adm-sidebar" aria-label="Admin navigation">
-          <Link href="/admin" className="adm-brand">
-            <span className="brand-mark" aria-hidden="true">
+    <div className={`adm-shell${open ? " is-nav-open" : ""}`}>
+      <aside className="adm-sidebar" aria-label="Admin navigation">
+        <Link href="/admin" className="adm-brand">
+          <span className="adm-brand-mark" aria-hidden="true">
+            {initials}
+          </span>
+          <span className="adm-brand-text">
+            <strong>{owner || "Portfolio"}</strong>
+            <small>Portfolio admin</small>
+          </span>
+        </Link>
+
+        <nav className="adm-nav">
+          {NAV.map((group) => (
+            <div key={group.title} className="adm-nav-group">
+              <p className="adm-nav-title">{group.title}</p>
+              {group.items.map(({ href, label, icon: Icon, exact, count, badge }) => {
+                const active = isActive(href, exact);
+                const value = count ? counts[count] : undefined;
+                return (
+                  <Link key={href} href={href} className={`adm-nav-link${active ? " is-active" : ""}`} aria-current={active ? "page" : undefined}>
+                    <Icon size={17} />
+                    <span>{label}</span>
+                    {value !== undefined && (badge ? value > 0 && <span className="adm-nav-badge">{value}</span> : <span className="adm-nav-count">{value}</span>)}
+                  </Link>
+                );
+              })}
+            </div>
+          ))}
+        </nav>
+
+        <div className="adm-sidebar-foot">
+          <a href="/" target="_blank" rel="noreferrer" className="adm-site-link">
+            <span className="adm-live-dot" aria-hidden="true" />
+            <span>Live site</span>
+            <ArrowUpRight size={14} />
+          </a>
+          <div className="adm-user">
+            <span className="adm-avatar" aria-hidden="true">
               {initials}
             </span>
-            <span>
-              <strong>{owner || "Portfolio"}</strong>
-              <small>Admin dashboard</small>
+            <span className="adm-user-text">
+              <strong>{user.name}</strong>
+              <small>Administrator</small>
             </span>
-          </Link>
-          <nav className="adm-nav">
-            {NAV.map(({ href, label, icon: Icon, exact, badge }) => (
-              <Link key={href} href={href} className={`adm-nav-link${isActive(href, exact) ? " is-active" : ""}`} aria-current={isActive(href, exact) ? "page" : undefined}>
-                <Icon size={18} />
-                <span>{label}</span>
-                {badge && unread > 0 && <span className="adm-nav-badge">{unread}</span>}
-              </Link>
-            ))}
-          </nav>
-          <div className="adm-sidebar-foot">
-            <Link href="/admin/account" className={`adm-nav-link${isActive("/admin/account") ? " is-active" : ""}`}>
-              <Settings size={18} />
-              <span>Account</span>
+            <Link href="/admin/account" className={`adm-icon-btn${isActive("/admin/account") ? " is-active" : ""}`} aria-label="Account settings" title="Account settings">
+              <Settings size={16} />
             </Link>
-            <button type="button" className="adm-nav-link" onClick={signOut} disabled={signingOut}>
-              <LogOut size={18} />
-              <span>{signingOut ? "Signing out…" : "Sign out"}</span>
+            <button type="button" className="adm-icon-btn" onClick={signOut} disabled={signingOut} aria-label="Sign out" title="Sign out">
+              <LogOut size={16} />
             </button>
           </div>
-        </aside>
-
-        <div className="adm-main">
-          <header className="adm-topbar">
-            <button type="button" className="adm-icon-btn adm-menu-btn" onClick={() => setOpen((v) => !v)} aria-label="Toggle navigation" aria-expanded={open}>
-              <span className="menu-icon" aria-hidden="true" />
-            </button>
-            <span className="adm-topbar-user">
-              Signed in as <strong>{user.name}</strong>
-            </span>
-            <div className="adm-topbar-actions">
-              <ThemeToggle />
-              <a href="/" target="_blank" rel="noreferrer" className="button button-secondary button-sm">
-                View site <ArrowUpRight size={14} />
-              </a>
-            </div>
-          </header>
-          <main id="main" className="adm-content">
-            {children}
-          </main>
         </div>
-        <button type="button" className="adm-scrim" aria-label="Close navigation" onClick={() => setOpen(false)} tabIndex={-1} />
+      </aside>
+
+      <div className="adm-main">
+        <header className="adm-topbar">
+          <button type="button" className="adm-icon-btn adm-menu-btn" onClick={() => setOpen((v) => !v)} aria-label="Toggle navigation" aria-expanded={open}>
+            <span className="menu-icon" aria-hidden="true" />
+          </button>
+          <nav aria-label="Breadcrumb" className="adm-crumbs">
+            <ol>
+              {crumbs.map((c, i) => (
+                <li key={c.href}>
+                  {i > 0 && <ChevronRight size={14} />}
+                  {i === crumbs.length - 1 ? <span aria-current="page">{c.label}</span> : <Link href={c.href}>{c.label}</Link>}
+                </li>
+              ))}
+            </ol>
+          </nav>
+          <div className="adm-topbar-actions">
+            <ThemeToggle />
+            <a href="/" target="_blank" rel="noreferrer" className="button button-secondary button-sm adm-topbar-site">
+              View site <ArrowUpRight size={14} />
+            </a>
+          </div>
+        </header>
+        <main id="main" className="adm-content">
+          {children}
+        </main>
       </div>
-    </>
+      <button type="button" className="adm-scrim" aria-label="Close navigation" onClick={() => setOpen(false)} tabIndex={-1} />
+    </div>
   );
 }
