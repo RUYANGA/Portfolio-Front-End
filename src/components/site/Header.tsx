@@ -80,7 +80,7 @@ export default function Header({ name, cvUrl }: { name: string; cvUrl: string })
   }, [open]);
 
   return (
-    <header className={`site-header${scrolled ? " is-scrolled" : ""}`}>
+    <header className={`site-header${scrolled ? " is-scrolled" : ""}${open ? " is-menu-open" : ""}`}>
       <div className="wrap header-row">
         <Link href="/" className="brand" onClick={() => setOpen(false)}>
           <span className="brand-mark" aria-hidden="true">{initials(name)}</span>
@@ -117,11 +117,18 @@ export default function Header({ name, cvUrl }: { name: string; cvUrl: string })
       <div id="mobile-menu" className={`mobile-menu${open ? " is-open" : ""}`} hidden={!open}>
         <nav aria-label="Mobile">
           {LINKS.map((l, i) => (
-            <Link key={l.id} href={`/#${l.id}`} onClick={() => setOpen(false)} style={{ "--i": i } as React.CSSProperties}>
+            <Link
+              key={l.id}
+              href={`/#${l.id}`}
+              onClick={() => setOpen(false)}
+              className={active === l.id ? "is-active" : undefined}
+              aria-current={active === l.id ? "location" : undefined}
+              style={{ "--i": i } as React.CSSProperties}
+            >
               {l.label}
             </Link>
           ))}
-          <ResumeButton url={cvUrl} label="Download résumé" onOpen={() => setOpen(false)} />
+          <ResumeButton url={cvUrl} label="Download résumé" className="button button-primary" onOpen={() => setOpen(false)} />
         </nav>
       </div>
     </header>

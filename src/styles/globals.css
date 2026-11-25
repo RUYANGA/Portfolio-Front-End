@@ -549,11 +549,30 @@ a:hover {
   position: sticky;
   top: 0;
   z-index: 50;
+  isolation: isolate;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s;
+}
+
+/* The frosted background lives on a pseudo-element: a backdrop-filter on the header itself would
+   trap the fixed mobile menu inside the header's 68px box. */
+.site-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
   background: color-mix(in srgb, var(--bg) 82%, transparent);
   backdrop-filter: saturate(180%) blur(14px);
   -webkit-backdrop-filter: saturate(180%) blur(14px);
-  border-bottom: 1px solid transparent;
-  transition: border-color 0.2s, background-color 0.2s;
+  transition: background-color 0.2s;
+}
+
+.site-header.is-menu-open::before {
+  background: var(--bg);
+}
+
+.site-header.is-menu-open {
+  border-bottom-color: var(--line);
 }
 
 .site-header.is-scrolled {
@@ -704,11 +723,24 @@ a:hover {
 
 .mobile-menu {
   position: fixed;
-  inset: var(--header-h) 0 0;
+  top: var(--header-h);
+  left: 0;
+  right: 0;
+  height: calc(100vh - var(--header-h));
+  height: calc(100dvh - var(--header-h));
+  z-index: 49;
   background: var(--bg);
-  border-top: 1px solid var(--line);
-  padding: 1.5rem var(--gutter);
+  padding: 1rem var(--gutter) calc(1.5rem + env(safe-area-inset-bottom));
   overflow-y: auto;
+  overscroll-behavior: contain;
+  animation: menu-in 0.22s var(--ease);
+}
+
+@keyframes menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
 }
 
 .mobile-menu nav {
@@ -717,17 +749,39 @@ a:hover {
 }
 
 .mobile-menu a:not(.button) {
-  padding: 0.875rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.95rem 0.25rem;
   border-bottom: 1px solid var(--line);
   color: var(--ink);
-  font-size: 1.25rem;
+  font-size: 1.1875rem;
   font-weight: 600;
+  letter-spacing: -0.01em;
   animation: enter-up 0.4s var(--ease) both;
   animation-delay: calc(var(--i) * 40ms);
 }
 
+.mobile-menu a:not(.button)::after {
+  content: "→";
+  color: var(--ink-3);
+  font-weight: 500;
+  transition: transform 0.15s, color 0.15s;
+}
+
+.mobile-menu a:not(.button):active::after,
+.mobile-menu a:not(.button):hover::after {
+  transform: translateX(3px);
+  color: var(--accent-text);
+}
+
+.mobile-menu a.is-active {
+  color: var(--accent-text);
+}
+
 .mobile-menu .button {
-  margin-top: 1.25rem;
+  width: 100%;
+  margin-top: 1.5rem;
 }
 
 @media (max-width: 900px) {
