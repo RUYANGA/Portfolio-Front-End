@@ -177,6 +177,26 @@ export const RESOURCES: Resource[] = [
     ],
   },
   {
+    key: "contact-subjects",
+    endpoint: "contact-subjects",
+    label: "Contact subjects",
+    singular: "subject",
+    description: "The subjects visitors choose from in the contact form. Only active ones are shown on the site.",
+    titleField: "label",
+    badges: (s) => (s.is_active ? [{ text: "Active", tone: "live" }] : [{ text: "Hidden", tone: "muted" }]),
+    searchFields: ["label"],
+    defaults: { is_active: true },
+    sections: [
+      {
+        title: "Subject",
+        fields: [
+          { name: "label", label: "Subject", type: "text", required: true, placeholder: "e.g. Full-time job opportunity" },
+          { name: "is_active", label: "Show on the site", type: "checkbox", help: "Hidden subjects stay here but aren't offered in the form." },
+        ],
+      },
+    ],
+  },
+  {
     key: "certifications",
     endpoint: "certifications",
     label: "Certifications",

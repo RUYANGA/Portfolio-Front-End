@@ -53,7 +53,7 @@ function SectionHead({ id, eyebrow, title, lede }: { id: string; eyebrow: string
 }
 
 export default async function HomePage() {
-  const { profile, experiences, projects, skill_groups, education, certifications } = await getPortfolio();
+  const { profile, experiences, projects, skill_groups, education, certifications, contact_subjects } = await getPortfolio();
 
   const inProduction = projects.filter((p) => p.status === "production");
   const live = inProduction.filter((p) => p.url);
@@ -449,7 +449,7 @@ export default async function HomePage() {
                 </ul>
               </div>
               <div className="contact-form-wrap">
-                <ContactForm apiUrl={PUBLIC_API} email={profile.email} />
+                <ContactForm apiUrl={PUBLIC_API} email={profile.email} subjects={contact_subjects ?? []} />
               </div>
             </div>
           </div>

@@ -4,7 +4,7 @@ import { FormEvent, useState } from "react";
 
 type Errors = Partial<Record<"name" | "email" | "subject" | "message" | "form", string>>;
 
-export default function ContactForm({ apiUrl, email }: { apiUrl: string; email: string }) {
+export default function ContactForm({ apiUrl, email, subjects = [] }: { apiUrl: string; email: string; subjects?: string[] }) {
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [errors, setErrors] = useState<Errors>({});
@@ -81,8 +81,22 @@ export default function ContactForm({ apiUrl, email }: { apiUrl: string; email: 
       </div>
       <div className="field">
         <label htmlFor="subject">Subject</label>
-        <input id="subject" name="subject" maxLength={160} placeholder="e.g. Backend role, project idea" />
-        {errors.subject && <span className="field-error">{errors.subject}</span>}
+        {subjects.length ? (
+          <select id="subject" name="subject" required defaultValue=""
+            aria-invalid={!!errors.subject} aria-describedby={errors.subject ? "subject-error" : undefined}>
+            <option value="" disabled>
+              Choose a subject
+            </option>
+            {subjects.map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <input id="subject" name="subject" maxLength={160} placeholder="e.g. Backend role, project idea" />
+        )}
+        {errors.subject && <span id="subject-error" className="field-error">{errors.subject}</span>}
       </div>
       <div className="field">
         <label htmlFor="message">Message</label>

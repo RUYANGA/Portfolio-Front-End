@@ -350,3 +350,8 @@ export const Monitor = (p: IconProps) => (
     <path d="M8 20h8M12 16v4" />
   </Svg>
 );
+export const ListIcon = (p: IconProps) => (
+  <Svg {...p}>
+    <path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01" />
+  </Svg>
+);
