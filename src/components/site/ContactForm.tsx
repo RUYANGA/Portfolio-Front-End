@@ -65,6 +65,10 @@ export default function ContactForm({ apiUrl, email, subjects = [] }: { apiUrl: 
 
   return (
     <form className="form" onSubmit={onSubmit} noValidate={false}>
+      <div className="form-head">
+        <h3>Send a message</h3>
+        <p>All fields are required.</p>
+      </div>
       <div className="form-row">
         <div className="field">
           <label htmlFor="name">Name</label>
@@ -112,6 +116,11 @@ export default function ContactForm({ apiUrl, email, subjects = [] }: { apiUrl: 
       <div>
         <button type="submit" className="button button-primary" disabled={sending}>
           {sending ? "Sending…" : "Send message"}
+          {!sending && (
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z" />
+            </svg>
+          )}
         </button>
       </div>
     </form>
