@@ -71,22 +71,26 @@ export default function TypedHeadline({ headline, id, className, style }: { head
 
   const before = headline.slice(0, start);
   const after = headline.slice(start + PHRASES[0].length);
-  const longest = PHRASES.reduce((a, b) => (b.length > a.length ? b : a));
+  // Only the last letter and the caret are kept together, so long phrases still wrap on phones.
+  const head = text.slice(0, -1);
+  const last = text.slice(-1);
 
   return (
     <h1 id={id} className={`${className ?? ""} typed-headline`} style={style}>
       <span className="visually-hidden">{headline}</span>
-      {/* Reserves the height of the longest version so nothing below moves while typing. */}
-      <span className="typed-ghost" aria-hidden="true">
-        {before}
-        <span className="typed-phrase">{longest}</span>
-        {after}
-      </span>
+      {/* One hidden copy per phrase reserves the tallest version, so nothing below moves while typing. */}
+      {PHRASES.map((phrase) => (
+        <span key={phrase} className="typed-ghost" aria-hidden="true">
+          {before}
+          <span className="typed-phrase">{phrase}</span>
+          {after}
+        </span>
+      ))}
       <span className="typed-live" aria-hidden="true">
         {before}
-        {/* Phrase and caret stay on one line so the caret never wraps on its own. */}
+        <span className="typed-phrase">{head}</span>
         <span className="typed-word">
-          <span className="typed-phrase">{text}</span>
+          <span className="typed-phrase">{last}</span>
           {animate && <span className="typed-caret" />}
         </span>
         {after}
