@@ -3170,10 +3170,40 @@ html.has-modal {
     padding-block: 2.5rem 3.5rem;
   }
 
+  /* Phones: two separate cards (contact details, then the form) instead of one nested panel. */
   .contact-panel {
-    gap: 1.5rem;
+    gap: 1rem;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    color: inherit;
+    overflow: visible;
+  }
+
+  .contact-panel::before {
+    display: none;
+  }
+
+  .contact-intro {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
     padding: 1.75rem 1.125rem 1.125rem;
+    border: 1px solid var(--panel-line);
     border-radius: 20px;
+    background: var(--panel);
+    color: var(--panel-ink);
+  }
+
+  .contact-intro::before {
+    content: "";
+    position: absolute;
+    inset: auto -30% -40% auto;
+    width: 90%;
+    aspect-ratio: 1;
+    z-index: -1;
+    background: radial-gradient(closest-side, color-mix(in srgb, var(--accent) 30%, transparent), transparent);
   }
 
   .contact-panel .section-title {
@@ -3216,10 +3246,11 @@ html.has-modal {
     font-size: 0.75rem;
   }
 
-  /* The form card uses nearly the full width. */
+  /* The form is its own card, full width. */
   .contact-form-wrap {
-    padding: 1.25rem 1rem 1rem;
-    border-radius: 16px;
+    padding: 1.375rem 1.125rem 1.125rem;
+    border-radius: 20px;
+    box-shadow: var(--shadow-md);
   }
 
   .form {
