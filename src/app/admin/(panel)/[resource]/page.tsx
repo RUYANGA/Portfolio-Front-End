@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import ResourceList from "@/components/admin/ResourceList";
+import SubjectManager from "@/components/admin/SubjectManager";
 import { getResource } from "@/lib/admin/resources";
 
 type Props = { params: { resource: string } };
@@ -22,7 +23,8 @@ export default function ResourcePage({ params }: Props) {
           <p>{resource.description}</p>
         </div>
       </header>
-      <ResourceList resourceKey={resource.key} />
+      {/* Subjects are a simple list, so they get an inline manager instead of the list + form pages. */}
+      {resource.key === "contact-subjects" ? <SubjectManager /> : <ResourceList resourceKey={resource.key} />}
     </>
   );
 }
