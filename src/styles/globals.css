@@ -3088,3 +3088,53 @@ html.has-modal {
 .field select option {
   color: var(--ink);
 }
+
+/* ---------- Hero typing effect ---------- */
+.typed-headline {
+  display: grid;
+}
+
+.typed-ghost,
+.typed-live {
+  grid-area: 1 / 1;
+}
+
+.typed-ghost {
+  visibility: hidden;
+}
+
+.typed-word {
+  white-space: nowrap;
+}
+
+.typed-phrase {
+  color: var(--accent-text);
+  background: linear-gradient(90deg, var(--accent), color-mix(in srgb, var(--accent) 55%, #009962));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.typed-caret {
+  display: inline-block;
+  width: 0.07em;
+  height: 0.9em;
+  margin-left: 0.04em;
+  margin-right: -0.11em;
+  vertical-align: -0.08em;
+  border-radius: 2px;
+  background: var(--accent);
+  animation: caret-blink 1s steps(1) infinite;
+}
+
+@keyframes caret-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .typed-caret {
+    display: none;
+  }
+}
