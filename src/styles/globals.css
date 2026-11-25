@@ -7,40 +7,47 @@
 :root {
   color-scheme: light;
   --bg: #ffffff;
-  --bg-alt: #f8fafb;
+  --bg-alt: #f4f7fb;
   --surface: #ffffff;
-  --surface-2: #f2f5f7;
-  --ink: #0b1220;
-  --ink-2: #475467;
-  --ink-3: #667085;
-  --line: #e4e7ec;
-  --line-strong: #d0d5dd;
-  --accent: #0f766e;
-  --accent-hover: #115e59;
+  --surface-2: #eef2f7;
+  --ink: #0f172a;
+  --ink-2: #3b4a5f;
+  --ink-3: #64748b;
+  --line: #e2e8f0;
+  --line-strong: #cbd5e1;
+  --accent: #0e7490;
+  --accent-hover: #155e75;
   --accent-ink: #ffffff;
-  --accent-soft: #effaf8;
-  --accent-text: #0f766e;
+  --accent-soft: #ecf8fb;
+  --accent-text: #0b6a84;
   --live: #12b76a;
   --live-soft: #ecfdf3;
   --live-text: #067647;
   --danger: #d92d20;
 
-  --panel: #0b1220;
-  --panel-ink: #f2f4f7;
-  --panel-dim: #98a2b3;
+  --panel: #0f172a;
+  --panel-ink: #f1f5f9;
+  --panel-dim: #94a3b8;
   --panel-line: rgba(255, 255, 255, 0.1);
 
-  --code-bg: #0d1520;
-  --code-ink: #e6edf3;
-  --code-dim: #7d8a9b;
+  --code-bg: #0f172a;
+  --code-ink: #e2e8f0;
+  --code-dim: #7c8ba1;
   --code-key: #7dd3c0;
   --code-str: #f5c26b;
   --code-lit: #a5b4fc;
 
-  --shadow-xs: 0 1px 2px rgba(16, 24, 40, 0.05);
-  --shadow-sm: 0 1px 3px rgba(16, 24, 40, 0.08), 0 1px 2px rgba(16, 24, 40, 0.04);
-  --shadow-md: 0 12px 24px -8px rgba(16, 24, 40, 0.12), 0 4px 8px -4px rgba(16, 24, 40, 0.06);
-  --shadow-lg: 0 24px 48px -16px rgba(16, 24, 40, 0.22);
+  /* Light-only depth: hero wash, tinted shadows and the primary button glow. */
+  --hero-wash: radial-gradient(60% 55% at 85% 0%, rgba(14, 116, 144, 0.1), transparent 70%),
+    radial-gradient(45% 50% at 0% 10%, rgba(79, 70, 229, 0.06), transparent 70%),
+    linear-gradient(180deg, #f3f8fb 0%, #ffffff 70%);
+  --section-wash: linear-gradient(180deg, #f4f7fb 0%, #f8fafc 100%);
+  --primary-glow: 0 1px 2px rgba(14, 116, 144, 0.25), 0 6px 16px -6px rgba(14, 116, 144, 0.45);
+
+  --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.05);
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.07), 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 14px 28px -10px rgba(15, 23, 42, 0.14), 0 4px 10px -4px rgba(15, 23, 42, 0.06);
+  --shadow-lg: 0 24px 48px -16px rgba(15, 23, 42, 0.22);
 
   --font-body: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
@@ -81,6 +88,9 @@
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
     --shadow-md: 0 12px 24px -8px rgba(0, 0, 0, 0.5);
     --shadow-lg: 0 24px 48px -16px rgba(0, 0, 0, 0.7);
+    --hero-wash: none;
+    --section-wash: var(--bg-alt);
+    --primary-glow: none;
   }
 }
 
@@ -110,6 +120,9 @@
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
   --shadow-md: 0 12px 24px -8px rgba(0, 0, 0, 0.5);
   --shadow-lg: 0 24px 48px -16px rgba(0, 0, 0, 0.7);
+  --hero-wash: none;
+  --section-wash: var(--bg-alt);
+  --primary-glow: none;
 }
 
 /* ---------- Base ---------- */
@@ -263,7 +276,7 @@ a:hover {
 .button-primary {
   background: var(--accent);
   color: var(--accent-ink);
-  box-shadow: var(--shadow-xs);
+  box-shadow: var(--primary-glow, var(--shadow-xs));
 }
 
 .button-primary:hover {
@@ -420,7 +433,7 @@ a:hover {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   padding: clamp(1.25rem, 2.5vw, 1.75rem);
-  box-shadow: var(--shadow-xs);
+  box-shadow: var(--shadow-sm);
 }
 
 .card-link {
@@ -459,7 +472,7 @@ a:hover {
 }
 
 .section-alt {
-  background: var(--bg-alt);
+  background: var(--section-wash, var(--bg-alt));
   border-block: 1px solid var(--line);
 }
 
@@ -735,6 +748,7 @@ a:hover {
 /* ---------- Hero ---------- */
 .hero {
   position: relative;
+  background: var(--hero-wash, none);
   padding-top: clamp(3rem, 8vw, 5.5rem);
   padding-bottom: clamp(3rem, 6vw, 4.5rem);
   overflow: hidden;
@@ -853,7 +867,7 @@ a:hover {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: var(--surface);
-  box-shadow: var(--shadow-xs);
+  box-shadow: var(--shadow-sm);
   overflow: hidden;
 }
 
@@ -1874,7 +1888,7 @@ a:hover {
   width: 70%;
   aspect-ratio: 1;
   z-index: -1;
-  background: radial-gradient(closest-side, rgba(45, 212, 191, 0.18), transparent);
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--accent) 30%, transparent), transparent);
 }
 
 .contact-panel .section-title {
