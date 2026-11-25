@@ -2272,3 +2272,132 @@ a.adm-check:hover {
 .adm-file-zoom:hover img {
   opacity: 0.85;
 }
+
+/* ---------- Contact subjects manager ---------- */
+.adm-subjects {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 340px);
+  gap: 1.25rem;
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .adm-subjects {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.adm-subject-add {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  padding: 1rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.adm-root .adm-subject-add input {
+  flex: 1;
+  min-width: 0;
+}
+
+.adm-subject-add-error {
+  flex-basis: 100%;
+  margin: 0;
+}
+
+.adm-subject-row {
+  gap: 0.75rem;
+}
+
+.adm-subject-label {
+  flex: 1;
+  min-width: 0;
+  padding: 0.35rem 0.5rem;
+  margin-left: -0.5rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: text;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.adm-subject-label:hover {
+  border-color: var(--line);
+  background: var(--bg-alt);
+}
+
+.adm-subject-row.is-hidden .adm-subject-label {
+  color: var(--ink-3);
+  font-weight: 500;
+}
+
+.adm-subject-edit {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.adm-root .adm-subject-edit input {
+  flex: 1;
+  min-width: 0;
+  padding-block: 0.4rem;
+}
+
+.adm-subject-edit .adm-error {
+  flex-basis: 100%;
+  margin: 0;
+}
+
+.adm-subject-switch {
+  flex: none;
+  gap: 0.5rem;
+  align-items: center;
+  cursor: pointer;
+}
+
+.adm-subject-state {
+  min-width: 3.25rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--ink-3);
+}
+
+.adm-subject-preview {
+  position: sticky;
+  top: calc(var(--adm-topbar) + 1.25rem);
+  display: grid;
+  gap: 0.5rem;
+}
+
+.adm-subject-preview .adm-panel-head {
+  margin-bottom: 0.25rem;
+}
+
+@media (max-width: 1024px) {
+  .adm-subject-preview {
+    position: static;
+  }
+}
+
+@media (max-width: 560px) {
+  .adm-subject-state {
+    display: none;
+  }
+  .adm-subject-label {
+    white-space: normal;
+    line-height: 1.35;
+  }
+  .adm-subject-row .adm-row-actions {
+    gap: 0;
+  }
+}
