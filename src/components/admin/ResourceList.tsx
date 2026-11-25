@@ -6,6 +6,7 @@ import { ArrowUpRight, ChevronDown, ChevronUp, Eye, Pencil, Plus, Search, Trash,
 import { adminFetch, ApiError } from "@/lib/admin/client";
 import { getResource, type Field, type Record_ } from "@/lib/admin/resources";
 import { useFeedback } from "./Feedback";
+import ResourceDialog from "./ResourceDialog";
 
 const PREVIEW_TYPES = new Set(["text", "textarea", "url", "email", "number", "select", "tags", "lines", "checkbox", "slug"]);
 
@@ -26,6 +27,34 @@ export default function ResourceList({ resourceKey }: { resourceKey: string }) {
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
   const [preview, setPreview] = useState<Record_ | null>(null);
+  // Resources with `editInDialog` are created and edited in a dialog: undefined = closed, null = new.
+  const [editing, setEditing] = useState<Record_ | null | undefined>(undefined);
+  const inDialog = Boolean(resource.editInDialog);
+
+  function openEditor(item: Record_ | null) {
+    closePreview();
+    setEditing(item);
+  }
+
+  function onSaved(saved: Record_, created: boolean) {
+    setItems((list) => (created ? [...(list ?? []), saved] : list?.map((i) => (i.id === saved.id ? saved : i)) ?? null));
+    setEditing(undefined);
+  }
+
+  /** A link to the editor page, or a button that opens the editor dialog. */
+  function EditTrigger({ item, className, children, label }: { item: Record_ | null; className: string; children: React.ReactNode; label?: string }) {
+    if (inDialog)
+      return (
+        <button type="button" className={className} onClick={() => openEditor(item)} aria-label={label} title={label}>
+          {children}
+        </button>
+      );
+    return (
+      <Link href={`/admin/${resource.key}/${item ? item.id : "new"}`} className={className} aria-label={label} title={label}>
+        {children}
+      </Link>
+    );
+  }
   const previewDialog = useRef<HTMLDialogElement>(null);
 
   function openPreview(item: Record_) {
@@ -103,9 +132,9 @@ export default function ResourceList({ resourceKey }: { resourceKey: string }) {
         <span className="adm-list-count">
           {items ? `${visible.length} of ${items.length}` : ""}
         </span>
-        <Link href={`/admin/${resource.key}/new`} className="button button-primary button-sm">
+        <EditTrigger item={null} className="button button-primary button-sm">
           <Plus size={16} /> New {resource.singular}
-        </Link>
+        </EditTrigger>
       </div>
 
       {error && <div className="adm-alert is-error">{error}</div>}
@@ -128,9 +157,9 @@ export default function ResourceList({ resourceKey }: { resourceKey: string }) {
           ) : (
             <>
               <p>No {resource.label.toLowerCase()} yet.</p>
-              <Link href={`/admin/${resource.key}/new`} className="button button-primary button-sm">
+              <EditTrigger item={null} className="button button-primary button-sm">
                 <Plus size={16} /> Add the first {resource.singular}
-              </Link>
+              </EditTrigger>
             </>
           )}
         </div>
@@ -159,10 +188,10 @@ export default function ResourceList({ resourceKey }: { resourceKey: string }) {
                     {thumb ? <img src={thumb} alt="" loading="lazy" /> : <span>No image</span>}
                   </button>
                 )}
-                <Link href={`/admin/${resource.key}/${item.id}`} className="adm-row-main">
+                <EditTrigger item={item} className="adm-row-main">
                   <strong>{String(item[resource.titleField] || "Untitled")}</strong>
                   {resource.subtitle && <span>{resource.subtitle(item)}</span>}
-                </Link>
+                </EditTrigger>
                 <div className="adm-row-badges">
                   {resource.badges?.(item).map((b) => (
                     <span key={b.text} className={`adm-badge is-${b.tone || "muted"}`}>
@@ -179,9 +208,9 @@ export default function ResourceList({ resourceKey }: { resourceKey: string }) {
                       <ArrowUpRight size={16} />
                     </a>
                   )}
-                  <Link className="adm-icon-btn" href={`/admin/${resource.key}/${item.id}`} aria-label="Edit" title="Edit">
+                  <EditTrigger item={item} className="adm-icon-btn" label="Edit">
                     <Pencil size={15} />
-                  </Link>
+                  </EditTrigger>
                   <button type="button" className="adm-icon-btn is-danger" onClick={() => remove(item)} aria-label="Delete" title="Delete">
                     <Trash size={15} />
                   </button>
@@ -257,14 +286,16 @@ export default function ResourceList({ resourceKey }: { resourceKey: string }) {
                     View on site <ArrowUpRight size={14} />
                   </a>
                 )}
-                <Link href={`/admin/${resource.key}/${preview.id}`} className="button button-primary button-sm">
+                <EditTrigger item={preview} className="button button-primary button-sm">
                   <Pencil size={14} /> Edit
-                </Link>
+                </EditTrigger>
               </footer>
             </>
           );
         })()}
       </dialog>
+
+      {editing !== undefined && <ResourceDialog key={editing?.id ?? "new"} resource={resource} item={editing} onSaved={onSaved} onClose={() => setEditing(undefined)} />}
     </div>
   );
 }
