@@ -43,6 +43,8 @@ export type Resource = {
   searchFields: string[];
   defaults: Record<string, unknown>;
   publicPath?: (item: Record_) => string | null;
+  /** Create and edit in a dialog on the list page (for small resources without files). */
+  editInDialog?: boolean;
 };
 
 export const PROJECT_STATUS = [
@@ -140,6 +142,7 @@ export const RESOURCES: Resource[] = [
     label: "Skills",
     singular: "skill group",
     description: "Groups of skills shown in the Technical toolkit section.",
+    editInDialog: true,
     titleField: "name",
     subtitle: (g) => `${(g.skills as string[] | undefined)?.length ?? 0} skills`,
     searchFields: ["name"],
