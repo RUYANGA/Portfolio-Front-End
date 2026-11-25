@@ -15,6 +15,7 @@ import {
   LayoutGrid,
   LogOut,
   Settings,
+  ListIcon,
   UserIcon,
 } from "@/components/ui/Icons";
 import ThemeToggle from "@/components/ui/ThemeToggle";
@@ -31,6 +32,7 @@ const NAV: { title: string; items: NavItem[] }[] = [
     items: [
       { href: "/admin", label: "Overview", icon: LayoutGrid, exact: true },
       { href: "/admin/messages", label: "Messages", icon: InboxIcon, count: "unread_messages", badge: true },
+      { href: "/admin/contact-subjects", label: "Contact subjects", icon: ListIcon },
     ],
   },
   {
@@ -54,6 +56,7 @@ const LABELS: Record<string, string> = {
   education: "Education",
   certifications: "Certifications",
   messages: "Messages",
+  "contact-subjects": "Contact subjects",
   account: "Account",
   new: "New",
 };

@@ -73,4 +73,6 @@ export type Portfolio = {
   projects: Project[];
   education: Education[];
   certifications: Certification[];
+  /** Subjects offered in the contact form (managed in the admin). */
+  contact_subjects?: string[];
 };

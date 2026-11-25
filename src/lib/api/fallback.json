@@ -344,5 +344,20 @@
       "year": "2024",
       "credential_url": "https://intranet.alxswe.com/certificates/5LspmcrB32"
     }
+  ],
+  "contact_subjects": [
+    "Full-time job opportunity",
+    "Contract or freelance project",
+    "Backend or API development",
+    "Full-stack web application",
+    "System design or architecture review",
+    "Database design or optimization",
+    "Cloud deployment and DevOps",
+    "AI or LLM integration",
+    "Technical consulting",
+    "Collaboration or partnership",
+    "Mentoring, speaking or interview",
+    "General question",
+    "Other"
   ]
 }
