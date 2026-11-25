@@ -2,6 +2,7 @@ import Link from "next/link";
 import BackToTop from "@/components/site/BackToTop";
 import CertificateGallery from "@/components/site/CertificateGallery";
 import ContactForm from "@/components/site/ContactForm";
+import TypedHeadline from "@/components/site/TypedHeadline";
 import CopyEmail from "@/components/site/CopyEmail";
 import Footer from "@/components/site/Footer";
 import Header from "@/components/site/Header";
@@ -100,9 +101,7 @@ export default async function HomePage() {
               <p className="hero-kicker hero-enter" style={delay(60)}>
                 {profile.name} · {profile.title}
               </p>
-              <h1 id="hero-title" className="hero-title hero-enter" style={delay(120)}>
-                {profile.headline}
-              </h1>
+              <TypedHeadline id="hero-title" className="hero-title hero-enter" style={delay(120)} headline={profile.headline} />
               <p className="hero-intro hero-enter" style={delay(200)}>
                 {profile.summary.split(". ")[0]}.
               </p>
