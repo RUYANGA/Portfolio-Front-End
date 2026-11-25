@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
-import { Check, ChevronDown, ChevronUp, Pencil, Plus, Trash, XIcon } from "@/components/ui/Icons";
+import { ChevronDown, ChevronUp, Pencil, Plus, Trash, XIcon } from "@/components/ui/Icons";
 import { adminFetch, ApiError } from "@/lib/admin/client";
 import { useFeedback } from "./Feedback";
 
@@ -9,7 +9,7 @@ type Subject = { id: number; label: string; is_active: boolean; order: number };
 
 const ENDPOINT = "contact-subjects";
 
-/** Contact form subjects: quick add, inline rename, show/hide, reorder, delete and a live preview. */
+/** Contact form subjects: quick add, edit in a dialog, show/hide, reorder, delete and a live preview. */
 export default function SubjectManager() {
   const { toast, confirm } = useFeedback();
   const [items, setItems] = useState<Subject[] | null>(null);
@@ -17,7 +17,9 @@ export default function SubjectManager() {
   const [draft, setDraft] = useState("");
   const [addError, setAddError] = useState("");
   const [adding, setAdding] = useState(false);
-  const [editing, setEditing] = useState<{ id: number; label: string; error?: string } | null>(null);
+  const [editing, setEditing] = useState<{ item: Subject; label: string; active: boolean; error?: string } | null>(null);
+  const [saving, setSaving] = useState(false);
+  const editDialog = useRef<HTMLDialogElement>(null);
   const [busyId, setBusyId] = useState<number | null>(null);
   const addInput = useRef<HTMLInputElement>(null);
 
@@ -68,13 +70,39 @@ export default function SubjectManager() {
     }
   }
 
-  async function saveRename(item: Subject) {
+  function openEdit(item: Subject) {
+    setEditing({ item, label: item.label, active: item.is_active });
+    requestAnimationFrame(() => editDialog.current?.showModal());
+  }
+
+  function closeEdit() {
+    editDialog.current?.close();
+    setEditing(null);
+  }
+
+  async function saveEdit(e: FormEvent) {
+    e.preventDefault();
     if (!editing) return;
+    const { item } = editing;
     const label = editing.label.trim();
     if (!label) return setEditing({ ...editing, error: "The subject can't be empty." });
     if (exists(label, item.id)) return setEditing({ ...editing, error: "That subject is already in the list." });
-    if (label === item.label) return setEditing(null);
-    if (await patch(item, { label }, "Subject renamed.")) setEditing(null);
+    const body: Partial<Subject> = {};
+    if (label !== item.label) body.label = label;
+    if (editing.active !== item.is_active) body.is_active = editing.active;
+    if (!Object.keys(body).length) return closeEdit();
+    setSaving(true);
+    try {
+      const saved = await adminFetch<Subject>(`${ENDPOINT}/${item.id}/`, { method: "PATCH", body });
+      setItems((list) => list?.map((s) => (s.id === item.id ? saved : s)) ?? null);
+      toast("Subject updated.");
+      closeEdit();
+    } catch (err) {
+      const apiErr = err as ApiError;
+      setEditing({ ...editing, error: apiErr.fields?.label || apiErr.message });
+    } finally {
+      setSaving(false);
+    }
   }
 
   async function remove(item: Subject) {
@@ -146,7 +174,6 @@ export default function SubjectManager() {
         {items && items.length > 0 && (
           <ul className="adm-rows">
             {items.map((item, index) => {
-              const isEditing = editing?.id === item.id;
               return (
                 <li key={item.id} className={`adm-row adm-subject-row${item.is_active ? "" : " is-hidden"}`}>
                   <div className="adm-order" aria-label="Change order">
@@ -158,30 +185,9 @@ export default function SubjectManager() {
                     </button>
                   </div>
 
-                  {isEditing ? (
-                    <form className="adm-subject-edit" onSubmit={(e) => (e.preventDefault(), saveRename(item))}>
-                      <input
-                        autoFocus
-                        value={editing.label}
-                        maxLength={120}
-                        aria-label="Subject"
-                        aria-invalid={!!editing.error}
-                        onChange={(e) => setEditing({ id: item.id, label: e.target.value })}
-                        onKeyDown={(e) => e.key === "Escape" && setEditing(null)}
-                      />
-                      <button type="submit" className="adm-icon-btn" aria-label="Save" title="Save" disabled={busyId === item.id}>
-                        <Check size={16} />
-                      </button>
-                      <button type="button" className="adm-icon-btn" aria-label="Cancel" title="Cancel" onClick={() => setEditing(null)}>
-                        <XIcon size={16} />
-                      </button>
-                      {editing.error && <p className="adm-error">{editing.error}</p>}
-                    </form>
-                  ) : (
-                    <button type="button" className="adm-subject-label" onClick={() => setEditing({ id: item.id, label: item.label })} title="Click to rename">
-                      {item.label}
-                    </button>
-                  )}
+                  <button type="button" className="adm-subject-label" onClick={() => openEdit(item)} title="Edit subject">
+                    {item.label}
+                  </button>
 
                   <label className="adm-switch adm-subject-switch" title={item.is_active ? "Shown in the contact form" : "Hidden from the contact form"}>
                     <input
@@ -196,11 +202,9 @@ export default function SubjectManager() {
                   </label>
 
                   <div className="adm-row-actions">
-                    {!isEditing && (
-                      <button type="button" className="adm-icon-btn" onClick={() => setEditing({ id: item.id, label: item.label })} aria-label={`Rename “${item.label}”`} title="Rename">
-                        <Pencil size={15} />
-                      </button>
-                    )}
+                    <button type="button" className="adm-icon-btn" onClick={() => openEdit(item)} aria-label={`Edit “${item.label}”`} title="Edit">
+                      <Pencil size={15} />
+                    </button>
                     <button type="button" className="adm-icon-btn is-danger" onClick={() => remove(item)} aria-label={`Delete “${item.label}”`} title="Delete">
                       <Trash size={15} />
                     </button>
@@ -234,6 +238,72 @@ export default function SubjectManager() {
         </select>
         <p className="adm-help">This is the dropdown visitors see. Changes apply to the site straight away.</p>
       </aside>
+      <dialog
+        ref={editDialog}
+        className="adm-dialog adm-subject-dialog"
+        onCancel={(e) => (e.preventDefault(), closeEdit())}
+        onClick={(e) => e.target === e.currentTarget && closeEdit()}
+        aria-labelledby="subject-dialog-title"
+      >
+        {editing && (
+          <form onSubmit={saveEdit} noValidate>
+            <header className="adm-subject-dialog-head">
+              <div>
+                <p className="adm-preview-kicker">Contact subject</p>
+                <h2 id="subject-dialog-title">Edit subject</h2>
+              </div>
+              <button type="button" className="adm-icon-btn" onClick={closeEdit} aria-label="Close">
+                <XIcon size={16} />
+              </button>
+            </header>
+            <div className="adm-subject-dialog-body">
+              <div className="adm-field">
+                <label htmlFor="subject-label" className="adm-label">
+                  Subject <span className="adm-required">*</span>
+                </label>
+                <input
+                  id="subject-label"
+                  autoFocus
+                  value={editing.label}
+                  maxLength={120}
+                  onChange={(e) => setEditing({ ...editing, label: e.target.value, error: undefined })}
+                  aria-invalid={!!editing.error}
+                  aria-describedby={editing.error ? "subject-label-error" : "subject-label-help"}
+                />
+                {editing.error ? (
+                  <p id="subject-label-error" className="adm-error">
+                    {editing.error}
+                  </p>
+                ) : (
+                  <p id="subject-label-help" className="adm-help">
+                    Shown to visitors in the contact form. Messages already sent keep their subject.
+                  </p>
+                )}
+              </div>
+              <label className="adm-switch adm-subject-dialog-switch">
+                <input type="checkbox" checked={editing.active} onChange={(e) => setEditing({ ...editing, active: e.target.checked })} />
+                <span className="adm-switch-track" aria-hidden="true" />
+                <span className="adm-switch-text">
+                  <span className="adm-label">Show in the contact form</span>
+                  <span className="adm-help">Hidden subjects stay in this list but aren&apos;t offered to visitors.</span>
+                </span>
+              </label>
+            </div>
+            <footer className="adm-dialog-foot">
+              <button type="button" className="button button-secondary button-sm adm-text-danger adm-subject-dialog-delete" onClick={() => { const item = editing.item; closeEdit(); remove(item); }}>
+                <Trash size={14} /> Delete
+              </button>
+              <span className="adm-preview-spacer" />
+              <button type="button" className="button button-secondary button-sm" onClick={closeEdit}>
+                Cancel
+              </button>
+              <button type="submit" className="button button-primary button-sm" disabled={saving}>
+                {saving ? "Saving…" : "Save changes"}
+              </button>
+            </footer>
+          </form>
+        )}
+      </dialog>
     </div>
   );
 }

@@ -2338,26 +2338,6 @@ a.adm-check:hover {
   font-weight: 500;
 }
 
-.adm-subject-edit {
-  flex: 1;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.35rem;
-  min-width: 0;
-}
-
-.adm-root .adm-subject-edit input {
-  flex: 1;
-  min-width: 0;
-  padding-block: 0.4rem;
-}
-
-.adm-subject-edit .adm-error {
-  flex-basis: 100%;
-  margin: 0;
-}
-
 .adm-subject-switch {
   flex: none;
   gap: 0.5rem;
@@ -2399,5 +2379,49 @@ a.adm-check:hover {
   }
   .adm-subject-row .adm-row-actions {
     gap: 0;
+  }
+}
+
+/* Edit subject dialog */
+.adm-subject-dialog {
+  width: min(480px, calc(100vw - 2rem));
+}
+
+.adm-subject-dialog-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 1.375rem 1rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.adm-subject-dialog-head h2 {
+  margin-top: 0.2rem;
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+.adm-subject-dialog-body {
+  display: grid;
+  gap: 1.25rem;
+  padding: 1.25rem 1.375rem 1.375rem;
+}
+
+.adm-subject-dialog-switch {
+  padding: 0.85rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--bg-alt);
+}
+
+.adm-dialog-foot .button svg {
+  flex: none;
+}
+
+@media (max-width: 560px) {
+  .adm-subject-dialog .adm-dialog-foot {
+    flex-wrap: nowrap;
+    gap: 0.4rem;
   }
 }
