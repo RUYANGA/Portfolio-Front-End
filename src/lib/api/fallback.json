@@ -1,0 +1,348 @@
+{
+  "profile": {
+    "name": "Merci Ruyanga",
+    "title": "Backend Engineer",
+    "headline": "I build backend systems that institutions run on every day.",
+    "summary": "Backend-focused full-stack engineer with 4+ years of experience designing, building, and deploying production web applications. I specialize in scalable backend architecture, microservices, event-driven systems with Apache Kafka, and REST and GraphQL APIs, using Python (Django, FastAPI), Node.js, NestJS, PostgreSQL, and Redis. I work across the full lifecycle, from system design and secure authentication to cloud deployment on AWS.",
+    "about": "I am a final-year Computer Science student at the University of Rwanda, and most of what I know I learned by shipping. Several systems I built are used daily by university staff, students, and innovators across multiple campuses. I like problems where the hard part is understanding how people actually work, then turning that into software that is reliable, secure, and easy to maintain.",
+    "location": "Kigali, Rwanda",
+    "email": "ruyangam15@gmail.com",
+    "phone": "+250 780 905 910",
+    "available_for_work": true,
+    "socials": [
+      {
+        "label": "GitHub",
+        "url": "https://github.com/RUYANGA"
+      },
+      {
+        "label": "LinkedIn",
+        "url": "https://linkedin.com/in/merci-ruyanga"
+      },
+      {
+        "label": "Email",
+        "url": "mailto:ruyangam15@gmail.com"
+      }
+    ],
+    "years_experience": 4,
+    "availability_text": "Available for backend & full-stack roles",
+    "about_heading": "Engineering systems people rely on",
+    "experience_intro": "Backend and full-stack engineering roles, building and running systems in production.",
+    "projects_intro": "Systems built for real users. Each one covers the problem and how I solved it.",
+    "skills_intro": "The languages, frameworks, and infrastructure I use to design, build, and run production systems.",
+    "contact_heading": "Let’s build something reliable",
+    "contact_intro": "Hiring for a backend or full-stack role, or have a system that needs building? I usually reply within two working days.",
+    "meta_description": "Backend engineer in Kigali building production systems with Python, Django, NestJS, PostgreSQL, Kafka, and AWS."
+  },
+  "skill_groups": [
+    {
+      "name": "Backend",
+      "skills": [
+        "Python",
+        "Django",
+        "FastAPI",
+        "Node.js",
+        "NestJS",
+        "REST APIs",
+        "GraphQL"
+      ]
+    },
+    {
+      "name": "AI and data streaming",
+      "skills": [
+        "AI/LLM API integration",
+        "Apache Kafka",
+        "Event-driven microservices"
+      ]
+    },
+    {
+      "name": "Databases and caching",
+      "skills": [
+        "PostgreSQL",
+        "MySQL",
+        "MongoDB",
+        "Redis",
+        "Prisma ORM"
+      ]
+    },
+    {
+      "name": "Languages",
+      "skills": [
+        "Python",
+        "TypeScript",
+        "JavaScript",
+        "Java",
+        "Dart",
+        "C++"
+      ]
+    },
+    {
+      "name": "Cloud and DevOps",
+      "skills": [
+        "AWS",
+        "Microsoft Azure",
+        "Docker",
+        "CI/CD",
+        "Nginx",
+        "Linux",
+        "Coolify",
+        "Git"
+      ]
+    },
+    {
+      "name": "Frontend and mobile",
+      "skills": [
+        "React",
+        "Next.js",
+        "Tailwind CSS",
+        "React Native",
+        "Flutter"
+      ]
+    },
+    {
+      "name": "Security and practice",
+      "skills": [
+        "JWT",
+        "RBAC",
+        "Input validation",
+        "Structured error handling",
+        "SOLID",
+        "Agile/Scrum"
+      ]
+    }
+  ],
+  "experiences": [
+    {
+      "role": "Backend Engineer",
+      "company": "UR Binary Hub",
+      "location": "Kigali, Rwanda",
+      "period": "2023 – Present",
+      "is_current": true,
+      "summary": "Backend engineering for internal and client-facing University of Rwanda platforms.",
+      "highlights": [
+        "Played a key role in the design, development, and production deployment of the Uni-Bridge platform.",
+        "Develop backend features with Node.js and NestJS, with request validation, structured error handling, and standardized API responses.",
+        "Debug production issues and improve reliability through logging and monitoring.",
+        "Provided technical support for invitation management at the 12th University of Rwanda Graduation Ceremony."
+      ],
+      "technologies": [
+        "Node.js",
+        "NestJS",
+        "TypeScript",
+        "PostgreSQL"
+      ]
+    },
+    {
+      "role": "Backend Engineer",
+      "company": "AmaliTech",
+      "location": "Kigali, Rwanda",
+      "period": "Sept 2025 – Aug 2026",
+      "is_current": false,
+      "summary": "AI-powered backend microservices in an Agile team.",
+      "highlights": [
+        "Designed and built AI-powered backend microservices in Python, integrating AI/LLM capabilities into production APIs.",
+        "Implemented event-driven communication between microservices with Apache Kafka for reliable, asynchronous processing.",
+        "Deployed and maintained services on AWS with containerized, CI/CD-driven release workflows.",
+        "Used Redis for caching, sessions, and queueing to reduce latency and improve throughput."
+      ],
+      "technologies": [
+        "Python",
+        "Apache Kafka",
+        "Redis",
+        "AWS",
+        "Docker"
+      ]
+    },
+    {
+      "role": "Full-Stack Intern",
+      "company": "SEVEN X",
+      "location": "Kigali, Rwanda",
+      "period": "Mar 2025 – May 2025",
+      "is_current": false,
+      "summary": "Web applications with a focus on backend service layers.",
+      "highlights": [
+        "Built high-performance web applications using Hono and Next.js.",
+        "Designed scalable PostgreSQL schemas supporting production workloads.",
+        "Developed and secured API endpoints with input validation and structured error handling."
+      ],
+      "technologies": [
+        "Hono",
+        "Next.js",
+        "PostgreSQL"
+      ]
+    },
+    {
+      "role": "Junior Backend Developer",
+      "company": "VIPI Transport",
+      "location": "Kigali, Rwanda",
+      "period": "Sept 2022 – 2023",
+      "is_current": false,
+      "summary": "RESTful APIs supporting daily transport operations.",
+      "highlights": [
+        "Designed and maintained RESTful APIs supporting daily transport operations.",
+        "Reduced query latency in PostgreSQL and MongoDB through indexing and refactoring.",
+        "Implemented JWT-based authentication and role-based authorization."
+      ],
+      "technologies": [
+        "Node.js",
+        "PostgreSQL",
+        "MongoDB",
+        "JWT"
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "title": "INUMA",
+      "slug": "inuma",
+      "tagline": "Staff travel approvals for the University of Rwanda, across every campus.",
+      "description": "A request-flow management system that digitized the local mission (staff travel) process, replacing slow paper approvals.",
+      "problem": "Every travel request has to pass several approvers in a set order, and the chain changes with the staff member's role and campus. Every action must be recorded, and no request can be lost or approved out of order.",
+      "approach": "I mapped the real approval process first, then modeled approval steps as data in PostgreSQL so chains are configurable rather than hard-coded. NestJS services move each request to the next approver automatically. Role-based access control with JWT restricts every action, and audit trails log who did what and when. Mission orders are issued with a verifiable QR code.",
+      "url": "https://inuma.ur.ac.rw",
+      "status": "production",
+      "stack": [
+        "Node.js",
+        "NestJS",
+        "PostgreSQL",
+        "React"
+      ],
+      "featured": true
+    },
+    {
+      "title": "Muruhongore250",
+      "slug": "muruhongore250",
+      "tagline": "The University of Rwanda's innovation management platform.",
+      "description": "Connects innovators with funders, partner organizations, and incubation programs, covering the full project lifecycle.",
+      "problem": "Promising innovators struggled to find suitable funding because opportunities were scattered and matching depended on personal networks.",
+      "approach": "End-to-end lifecycle workflows for idea submission, review, funding applications, and progress tracking, with role-based access for each stakeholder type. I also served as project manager, turning stakeholder needs into technical tasks.",
+      "url": "https://muruhongore250.ur.ac.rw",
+      "status": "production",
+      "stack": [
+        "Node.js",
+        "NestJS",
+        "PostgreSQL",
+        "React"
+      ],
+      "featured": true
+    },
+    {
+      "title": "UR Graduation System",
+      "slug": "ur-graduation",
+      "tagline": "Gown requests, payments, and invitation cards for University of Rwanda graduation ceremonies.",
+      "description": "The University of Rwanda's graduation portal. Graduates request a gown from the campus nearest to them, pay online, register the guardian attending with them, and receive their invitation card, tracking each step in real time. It runs the 12th graduation ceremony (2026), planned for 15,000 attendees.",
+      "problem": "",
+      "approach": "",
+      "url": "https://graduation.ur.ac.rw/",
+      "status": "production",
+      "stack": [
+        "Next.js"
+      ],
+      "featured": true
+    },
+    {
+      "title": "Uni-Bridge",
+      "slug": "uni-bridge",
+      "tagline": "A University of Rwanda platform built at UR Binary Hub.",
+      "description": "Designed, developed, and deployed to production as part of the UR Binary Hub team.",
+      "problem": "",
+      "approach": "",
+      "url": "https://unibridge.urbinaryhub.rw/",
+      "status": "production",
+      "stack": [
+        "Node.js",
+        "NestJS",
+        "PostgreSQL"
+      ],
+      "featured": false
+    },
+    {
+      "title": "U-Caravan",
+      "slug": "u-caravan",
+      "tagline": "A marketplace serving both B2B and B2C customers.",
+      "description": "E-commerce platform with real-time inventory tracking, dynamic pricing, and SEO-optimized product architecture.",
+      "problem": "",
+      "approach": "",
+      "url": "https://u-caravan.com/home",
+      "status": "production",
+      "stack": [
+        "Node.js",
+        "PostgreSQL",
+        "React"
+      ],
+      "featured": false
+    },
+    {
+      "title": "Agribridge",
+      "slug": "agribridge",
+      "tagline": "A digital marketplace connecting Rwandan farmers, sellers and buyers, with payments protected until delivery.",
+      "description": "Agribridge lets farmers list produce and buyers source in bulk without intermediaries. When an order is larger than one farmer can supply, nearby listings are pooled into a single sale, and farmers can also group up to buy seed and fertiliser at better prices. Buyers pay by mobile money or bank transfer; the money is held until both sides confirm delivery, and every completed sale builds the seller's reliability score. Available in Kinyarwanda, English and French, and installable as an app that works offline.",
+      "problem": "",
+      "approach": "",
+      "url": "https://www.agribridge.tech/",
+      "status": "production",
+      "stack": [
+        "React",
+        "Vite"
+      ],
+      "featured": false
+    }
+  ],
+  "education": [
+    {
+      "degree": "BSc in Computer Science",
+      "institution": "University of Rwanda, College of Science and Technology (Nyarugenge)",
+      "period": "Final year",
+      "coursework": "Data Structures and Algorithms, Database Systems, Software Engineering, Web Development"
+    }
+  ],
+  "certifications": [
+    {
+      "name": "AWS Certified Cloud Practitioner",
+      "issuer": "Amazon Web Services",
+      "year": "2026",
+      "credential_url": "https://aws.amazon.com/verification"
+    },
+    {
+      "name": "Machine Learning Foundations",
+      "issuer": "EdTech Solutions",
+      "year": "2026",
+      "credential_url": ""
+    },
+    {
+      "name": "Backend Development with Node.js",
+      "issuer": "EdTech Solutions",
+      "year": "2026",
+      "credential_url": ""
+    },
+    {
+      "name": "AI Literacy",
+      "issuer": "IBM SkillsBuild",
+      "year": "2025",
+      "credential_url": ""
+    },
+    {
+      "name": "Introduction to Cybersecurity",
+      "issuer": "Cisco Networking Academy",
+      "year": "2025",
+      "credential_url": ""
+    },
+    {
+      "name": "JavaScript Algorithms and Data Structures",
+      "issuer": "freeCodeCamp",
+      "year": "2025",
+      "credential_url": "https://freecodecamp.org/certification/fcc45215ff5-43ea-4b51-9a74-5a71825de1a8/javascript-algorithms-and-data-structures"
+    },
+    {
+      "name": "Pro JavaScript Backend Developer",
+      "issuer": "Udemy · iNeuron Intelligence",
+      "year": "2024",
+      "credential_url": "https://ude.my/UC-bf13b9b1-7dd3-4dc6-89bf-9d417e7afc71"
+    },
+    {
+      "name": "AI Career Essentials",
+      "issuer": "ALX",
+      "year": "2024",
+      "credential_url": "https://intranet.alxswe.com/certificates/5LspmcrB32"
+    }
+  ]
+}
