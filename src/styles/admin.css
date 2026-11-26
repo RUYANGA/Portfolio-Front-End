@@ -2452,3 +2452,286 @@ button.adm-row-main {
   text-align: left;
   cursor: pointer;
 }
+
+/* ---------- Booking: connected calendars ---------- */
+.adm-cal-list {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.adm-cal {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+}
+
+.adm-cal-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--ink-3);
+  border: 1px solid var(--line);
+}
+
+.adm-cal.is-ok .adm-cal-icon {
+  background: var(--live-soft);
+  color: var(--live-text);
+  border-color: color-mix(in srgb, var(--live) 30%, transparent);
+}
+
+.adm-cal.is-error {
+  border-color: color-mix(in srgb, var(--danger) 35%, transparent);
+  background: color-mix(in srgb, var(--danger) 6%, var(--surface));
+}
+
+.adm-cal.is-error .adm-cal-icon {
+  color: var(--danger);
+}
+
+.adm-cal-text {
+  display: grid;
+  gap: 0.1rem;
+  font-size: 0.875rem;
+}
+
+.adm-cal-text span {
+  color: var(--ink-3);
+  overflow-wrap: anywhere;
+}
+
+.adm-cal-empty {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.9rem 1rem;
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius-sm);
+  color: var(--ink-2);
+  font-size: 0.875rem;
+  line-height: 1.55;
+}
+
+.adm-cal-empty > svg {
+  flex: none;
+  margin-top: 0.15rem;
+  color: #b54708;
+}
+
+.adm-cal-empty p {
+  margin: 0.2rem 0 0.4rem;
+}
+
+.adm-cal-empty ol {
+  display: grid;
+  gap: 0.25rem;
+  padding-left: 1.1rem;
+  list-style: decimal;
+}
+
+.adm-cal-empty code {
+  padding: 0.05rem 0.35rem;
+  border-radius: 4px;
+  background: var(--surface-2);
+  font-size: 0.8125rem;
+}
+
+.adm-cal-fields {
+  margin-top: 1.25rem;
+}
+
+/* ---------- Booking: weekly hours ---------- */
+.adm-hours {
+  display: grid;
+}
+
+.adm-hours-day {
+  display: grid;
+  grid-template-columns: 160px minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 0.75rem;
+  padding: 0.75rem 0;
+  border-top: 1px solid var(--line);
+}
+
+.adm-hours-day:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.adm-hours-toggle {
+  align-items: center;
+  min-height: 40px;
+}
+
+.adm-hours-ranges {
+  display: grid;
+  gap: 0.5rem;
+  min-height: 40px;
+  align-content: center;
+}
+
+.adm-hours-range {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.adm-root .adm-hours-range input[type="time"] {
+  width: 152px;
+  padding-block: 0.45rem;
+}
+
+.adm-hours-day.is-off .adm-muted {
+  font-size: 0.875rem;
+}
+
+.adm-hours-day > .adm-icon-btn {
+  margin-top: 4px;
+}
+
+@media (max-width: 640px) {
+  .adm-hours-day {
+    grid-template-columns: 1fr auto;
+  }
+
+  .adm-hours-ranges {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  .adm-root .adm-hours-range input[type="time"] {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+/* ---------- Booking: bookings list ---------- */
+.adm-bk-day + .adm-bk-day {
+  margin-top: 1.5rem;
+}
+
+.adm-bk-day h2 {
+  margin-bottom: 0.6rem;
+  font-size: 0.8125rem;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.adm-bk-list {
+  overflow: hidden;
+}
+
+.adm-bk {
+  display: grid;
+  grid-template-columns: 104px minmax(0, 1fr) auto;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+}
+
+.adm-bk + .adm-bk {
+  border-top: 1px solid var(--line);
+}
+
+.adm-bk-time {
+  display: grid;
+  align-content: start;
+  gap: 0.1rem;
+  padding-left: 0.75rem;
+  border-left: 3px solid var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.adm-bk-time strong {
+  font-size: 1rem;
+  white-space: nowrap;
+}
+
+.adm-bk-time span {
+  white-space: nowrap;
+}
+
+.adm-bk-time span {
+  font-size: 0.8125rem;
+  color: var(--ink-3);
+}
+
+.adm-bk.is-cancelled .adm-bk-time {
+  border-left-color: var(--line-strong);
+}
+
+.adm-bk.is-cancelled .adm-bk-time strong {
+  text-decoration: line-through;
+  color: var(--ink-3);
+}
+
+.adm-bk-body {
+  display: grid;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+.adm-bk-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.adm-bk-title span:not(.adm-badge) {
+  color: var(--ink-2);
+}
+
+.adm-bk-title .adm-badge {
+  margin-left: 0.25rem;
+}
+
+.adm-bk-meta {
+  font-size: 0.8125rem;
+  color: var(--ink-3);
+  overflow-wrap: anywhere;
+}
+
+.adm-bk-notes {
+  margin-top: 0.2rem;
+  padding: 0.55rem 0.75rem;
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: var(--ink-2);
+  white-space: pre-line;
+}
+
+.adm-bk-actions {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.adm-bk-empty {
+  display: grid;
+  justify-items: center;
+  gap: 0.75rem;
+  padding: 3rem 1rem;
+  color: var(--ink-3);
+  text-align: center;
+}
+
+@media (max-width: 720px) {
+  .adm-bk {
+    grid-template-columns: 92px minmax(0, 1fr);
+  }
+
+  .adm-bk-actions {
+    grid-column: 1 / -1;
+  }
+}

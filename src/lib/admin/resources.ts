@@ -218,6 +218,31 @@ export const RESOURCES: Resource[] = [
     ],
   },
   {
+    key: "meeting-types",
+    endpoint: "booking/meeting-types",
+    label: "Meeting types",
+    singular: "meeting type",
+    description: "The kinds of meeting visitors can book. Only active ones are offered on the booking page.",
+    editInDialog: true,
+    titleField: "title",
+    subtitle: (t) => [`${t.duration_minutes} min`, t.description].filter(Boolean).join(" · "),
+    badges: (t) => (t.is_active ? [{ text: "Active", tone: "live" }] : [{ text: "Hidden", tone: "muted" }]),
+    searchFields: ["title", "description"],
+    defaults: { duration_minutes: 30, is_active: true },
+    sections: [
+      {
+        title: "Meeting type",
+        fields: [
+          { name: "title", label: "Name", type: "text", required: true, half: true, placeholder: "e.g. Intro call" },
+          { name: "slug", label: "URL slug", type: "slug", from: "title", required: true, half: true },
+          { name: "duration_minutes", label: "Length (minutes)", type: "number", required: true, half: true, help: "Between 10 and 240." },
+          { name: "is_active", label: "Offer on the booking page", type: "checkbox", half: true },
+          { name: "description", label: "Short description", type: "text", help: "Shown under the name on the booking page." },
+        ],
+      },
+    ],
+  },
+  {
     key: "contact-subjects",
     endpoint: "contact-subjects",
     label: "Contact subjects",
