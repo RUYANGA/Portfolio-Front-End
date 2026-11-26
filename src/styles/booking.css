@@ -59,7 +59,6 @@
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
-  overflow: hidden;
 }
 
 .bk-card-single,
@@ -80,6 +79,7 @@
   gap: 1rem;
   padding: clamp(1.5rem, 3vw, 2rem);
   border-right: 1px solid var(--line);
+  border-radius: var(--radius-lg) 0 0 var(--radius-lg);
   background: var(--bg-alt);
 }
 
@@ -93,14 +93,31 @@
   display: grid;
   place-items: center;
   flex: none;
-  width: 48px;
-  height: 48px;
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
+  /* Portrait photos: keep the face, not the shirt, in the circle. */
   object-fit: cover;
-  background: var(--accent-soft);
+  object-position: 50% 22%;
+  background: var(--surface);
   color: var(--accent-text);
+  font-size: 1.25rem;
   font-weight: 700;
-  border: 1px solid var(--line);
+  border: 3px solid var(--surface);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 55%, transparent), var(--shadow-sm);
+}
+
+.bk-host {
+  gap: 0.9rem;
+}
+
+.bk-share .share-project-btn {
+  width: 100%;
+  justify-content: center;
+}
+
+.bk-share .share-pop {
+  width: min(360px, calc(100vw - 2 * var(--gutter) - 2rem));
 }
 
 .bk-host-name {
@@ -151,6 +168,11 @@
   font-size: 0.9375rem;
   line-height: 1.6;
   color: var(--ink-2);
+}
+
+/* Phones get a compact dropdown; wider screens the full list. */
+.bk-type-select {
+  display: none;
 }
 
 .bk-types {
@@ -659,10 +681,18 @@
   .bk-side {
     border-right: 0;
     border-bottom: 1px solid var(--line);
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  }
+
+}
+
+@media (max-width: 900px) {
+  .bk-type-select {
+    display: grid;
   }
 
   .bk-types {
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    display: none;
   }
 }
 

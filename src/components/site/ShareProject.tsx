@@ -4,14 +4,23 @@ import { useEffect, useRef, useState } from "react";
 import { Check, Copy } from "@/components/ui/Icons";
 import { ShareIcon, copyText, shareTargets } from "./ShareButtons";
 
-type Props = { url?: string; title: string; text?: string };
+type Props = {
+  url?: string;
+  title: string;
+  text?: string;
+  /** Button text, e.g. "Share booking link". */
+  label?: string;
+  /** What is being shared, used in the screen-reader texts: "project", "booking link". */
+  noun?: string;
+  className?: string;
+};
 
 /**
  * "Share" button for the project page header. One click copies the project's link and opens a small
  * panel with the link and one-tap sharing (LinkedIn, X, WhatsApp, Facebook, email, or the phone's
  * share sheet).
  */
-export default function ShareProject({ url, title, text }: Props) {
+export default function ShareProject({ url, title, text, label = "Share project", noun = "project", className = "" }: Props) {
   const [link, setLink] = useState(url ?? "");
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -20,7 +29,7 @@ export default function ShareProject({ url, title, text }: Props) {
   const timer = useRef<ReturnType<typeof setTimeout>>();
 
   useEffect(() => {
-    if (!url) setLink(window.location.href.split("#")[0]);
+    setLink(url || window.location.href.split("#")[0]);
     setCanShare(typeof navigator.share === "function");
   }, [url]);
 
@@ -52,7 +61,7 @@ export default function ShareProject({ url, title, text }: Props) {
   }
 
   return (
-    <div className="share-project" ref={wrap}>
+    <div className={`share-project ${className}`.trim()} ref={wrap}>
       <button
         type="button"
         className={`button button-secondary share-project-btn${copied ? " is-copied" : ""}`}
@@ -61,19 +70,19 @@ export default function ShareProject({ url, title, text }: Props) {
         aria-haspopup="dialog"
       >
         {copied ? <Check size={16} /> : <ShareIcon />}
-        {copied ? "Link copied" : "Share project"}
+        {copied ? "Link copied" : label}
       </button>
       <span className="visually-hidden" aria-live="polite">
-        {copied ? "Project link copied to the clipboard" : ""}
+        {copied ? `The ${noun} link was copied to the clipboard` : ""}
       </span>
 
       {open && (
-        <div className="share-pop" role="dialog" aria-label="Share this project">
+        <div className="share-pop" role="dialog" aria-label={`Share this ${noun}`}>
           <p className="share-pop-title">
             <Check size={15} /> Link copied. Paste it anywhere, or share it directly:
           </p>
           <div className="share-pop-link">
-            <input value={link} readOnly aria-label="Project link" onFocus={(e) => e.currentTarget.select()} />
+            <input value={link} readOnly aria-label={`${noun[0].toUpperCase()}${noun.slice(1)} link`} onFocus={(e) => e.currentTarget.select()} />
             <button type="button" onClick={copy} aria-label="Copy link again" title="Copy">
               {copied ? <Check size={15} /> : <Copy size={15} />}
             </button>

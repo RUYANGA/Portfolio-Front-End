@@ -12,14 +12,17 @@ const PUBLIC_API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 export const revalidate = 60;
 
-export async function generateMetadata(): Promise<Metadata> {
-  const { profile } = await getPortfolio();
-  const title = `Book a call with ${profile.name}`;
+type Params = { searchParams: { type?: string } };
+
+export async function generateMetadata({ searchParams }: Params): Promise<Metadata> {
+  const [{ profile }, info] = await Promise.all([getPortfolio(), getBookingInfo()]);
+  const type = info?.meeting_types.find((t) => t.slug === searchParams.type);
+  const title = type ? `Book a ${type.title.toLowerCase()} with ${profile.name}` : `Book a call with ${profile.name}`;
   const description = `Pick a time that suits you for a video call with ${profile.name}, ${profile.title}. You'll get a calendar invitation straight away.`;
   return { title, description, alternates: { canonical: "/book" }, openGraph: { title, description } };
 }
 
-export default async function BookPage() {
+export default async function BookPage({ searchParams }: Params) {
   const [{ profile }, info] = await Promise.all([getPortfolio(), getBookingInfo()]);
   const open = info && info.enabled && info.meeting_types.length > 0;
 
@@ -45,6 +48,8 @@ export default async function BookPage() {
               apiUrl={PUBLIC_API}
               info={info}
               owner={{ name: profile.name, title: profile.title, photo: profile.photo }}
+              initialType={searchParams.type}
+              siteUrl={process.env.NEXT_PUBLIC_SITE_URL}
             />
           ) : (
             <div className="bk-card bk-closed">
