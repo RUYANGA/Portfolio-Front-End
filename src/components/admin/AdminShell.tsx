@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import {
   ArrowUpRight,
   Award,
+  BarChart,
   Briefcase,
   ChevronRight,
   Clock,
@@ -35,6 +36,7 @@ const NAV: { title: string; items: NavItem[] }[] = [
     title: "General",
     items: [
       { href: "/admin", label: "Overview", icon: LayoutGrid, exact: true },
+      { href: "/admin/analytics", label: "Analytics", icon: BarChart },
       { href: "/admin/messages", label: "Messages", icon: InboxIcon, count: "unread_messages", badge: true },
       { href: "/admin/contact-subjects", label: "Contact subjects", icon: ListIcon },
     ],
@@ -75,6 +77,7 @@ const LABELS: Record<string, string> = {
   "meeting-types": "Meeting types",
   "booking-settings": "Booking settings",
   account: "Account",
+  analytics: "Analytics",
   new: "New",
 };
 
