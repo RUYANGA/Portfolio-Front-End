@@ -60,12 +60,18 @@ export default function Header({ name, cvUrl }: { name: string; cvUrl: string })
     const observer = new IntersectionObserver(
       (entries) => {
         const visible = entries.filter((e) => e.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio);
-        if (visible[0]) setActive(visible[0].target.id);
+        if (visible[0]) setActive(window.scrollY < 120 ? "home" : visible[0].target.id);
       },
       { rootMargin: "-40% 0px -50% 0px", threshold: [0, 0.25, 0.5] },
     );
     sections.forEach((s) => observer.observe(s));
-    return () => observer.disconnect();
+    const onTop = () => window.scrollY < 120 && setActive("home");
+    onTop();
+    window.addEventListener("scroll", onTop, { passive: true });
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("scroll", onTop);
+    };
   }, [pathname]);
 
   // Close the mobile menu with Escape, and lock page scroll while it's open.
@@ -80,14 +86,34 @@ export default function Header({ name, cvUrl }: { name: string; cvUrl: string })
     };
   }, [open]);
 
+  // "Home": on the home page, scroll back to the top (and drop any #section from the URL);
+  // elsewhere, the link simply navigates to "/".
+  const goHome = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    setOpen(false);
+    if (pathname !== "/") return;
+    e.preventDefault();
+    window.history.replaceState(null, "", "/");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    setActive("home");
+  };
+  const homeActive = pathname === "/" && active === "home";
+
   return (
     <header className={`site-header${scrolled ? " is-scrolled" : ""}${open ? " is-menu-open" : ""}`}>
       <div className="wrap header-row">
-        <Link href="/" className="brand" onClick={() => setOpen(false)}>
+        <Link href="/" className="brand" onClick={goHome}>
           <span className="brand-mark" aria-hidden="true">{initials(name)}</span>
           <span className="brand-name">{name}</span>
         </Link>
         <nav className="nav" aria-label="Main">
+          <Link
+            href="/"
+            onClick={goHome}
+            className={`nav-link${homeActive ? " is-active" : ""}`}
+            aria-current={homeActive ? "page" : undefined}
+          >
+            Home
+          </Link>
           {LINKS.map((l) => (
             <Link
               key={l.id}
@@ -117,6 +143,15 @@ export default function Header({ name, cvUrl }: { name: string; cvUrl: string })
       <div className="progress" style={{ transform: `scaleX(${progress})` }} aria-hidden="true" />
       <div id="mobile-menu" className={`mobile-menu${open ? " is-open" : ""}`} hidden={!open}>
         <nav aria-label="Mobile">
+          <Link
+            href="/"
+            onClick={goHome}
+            className={homeActive ? "is-active" : undefined}
+            aria-current={homeActive ? "page" : undefined}
+            style={{ "--i": 0 } as React.CSSProperties}
+          >
+            Home
+          </Link>
           {LINKS.map((l, i) => (
             <Link
               key={l.id}
@@ -124,7 +159,7 @@ export default function Header({ name, cvUrl }: { name: string; cvUrl: string })
               onClick={() => setOpen(false)}
               className={active === l.id ? "is-active" : undefined}
               aria-current={active === l.id ? "location" : undefined}
-              style={{ "--i": i } as React.CSSProperties}
+              style={{ "--i": i + 1 } as React.CSSProperties}
             >
               {l.label}
             </Link>
