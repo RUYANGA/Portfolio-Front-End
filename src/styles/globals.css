@@ -3927,3 +3927,72 @@ html.has-modal {
     transform: none;
   }
 }
+
+/* ---------- "Book a call" entry points ---------- */
+.hero-book {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0 0.25rem;
+  font-weight: 600;
+  color: var(--accent-text);
+}
+
+.hero-book svg {
+  transition: transform 0.2s var(--ease);
+}
+
+.hero-book:hover svg {
+  transform: translateX(3px);
+}
+
+.book-cta {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  margin-top: 2rem;
+  padding: 1rem 1.125rem;
+  border: 1px solid var(--panel-line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--panel-ink);
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.book-cta:hover {
+  border-color: rgba(166, 219, 120, 0.5);
+  background: rgba(166, 219, 120, 0.08);
+  color: var(--panel-ink);
+}
+
+.book-cta-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: #a6db78;
+  color: #0f1f05;
+}
+
+.book-cta-text {
+  display: grid;
+  gap: 0.15rem;
+  flex: 1;
+}
+
+.book-cta-text span {
+  font-size: 0.875rem;
+  color: var(--panel-dim);
+}
+
+.book-cta-arrow {
+  flex: none;
+  color: #a6db78;
+  transition: transform 0.2s var(--ease);
+}
+
+.book-cta:hover .book-cta-arrow {
+  transform: translateX(3px);
+}
