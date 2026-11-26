@@ -8,6 +8,7 @@ import {
   Award,
   Briefcase,
   ChevronRight,
+  Clock,
   Cloud,
   Code,
   Folder,
@@ -23,7 +24,9 @@ import ThemeToggle from "@/components/ui/ThemeToggle";
 import type { AdminUser } from "@/lib/admin/session";
 import { FeedbackProvider, useFeedback } from "./Feedback";
 
-export type NavCounts = Partial<Record<"projects" | "labs" | "experiences" | "skill_groups" | "education" | "certifications" | "unread_messages", number>>;
+export type NavCounts = Partial<
+  Record<"projects" | "labs" | "experiences" | "skill_groups" | "education" | "certifications" | "unread_messages" | "upcoming_bookings", number>
+>;
 
 type NavItem = { href: string; label: string; icon: (p: { size?: number }) => JSX.Element; exact?: boolean; count?: keyof NavCounts; badge?: boolean };
 
@@ -34,6 +37,14 @@ const NAV: { title: string; items: NavItem[] }[] = [
       { href: "/admin", label: "Overview", icon: LayoutGrid, exact: true },
       { href: "/admin/messages", label: "Messages", icon: InboxIcon, count: "unread_messages", badge: true },
       { href: "/admin/contact-subjects", label: "Contact subjects", icon: ListIcon },
+    ],
+  },
+  {
+    title: "Meetings",
+    items: [
+      { href: "/admin/bookings", label: "Bookings", icon: Clock, count: "upcoming_bookings", badge: true },
+      { href: "/admin/meeting-types", label: "Meeting types", icon: ListIcon },
+      { href: "/admin/booking-settings", label: "Booking settings", icon: Settings },
     ],
   },
   {
@@ -60,6 +71,9 @@ const LABELS: Record<string, string> = {
   certifications: "Certifications",
   messages: "Messages",
   "contact-subjects": "Contact subjects",
+  bookings: "Bookings",
+  "meeting-types": "Meeting types",
+  "booking-settings": "Booking settings",
   account: "Account",
   new: "New",
 };
