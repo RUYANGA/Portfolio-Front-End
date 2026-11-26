@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
+import ShareProject from "@/components/site/ShareProject";
 import { ArrowLeft, ArrowRight, Check, Clock, Globe } from "@/components/ui/Icons";
 import {
   BookingInfo,
@@ -44,9 +45,21 @@ function shiftMonth({ year, month }: Month, delta: number): Month {
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
-export default function BookingFlow({ apiUrl, info, owner }: { apiUrl: string; info: BookingInfo; owner: Owner }) {
+type Props = {
+  apiUrl: string;
+  info: BookingInfo;
+  owner: Owner;
+  /** Meeting type to open with, from /book?type=<slug> (e.g. a shared link). */
+  initialType?: string;
+  /** Public site address, for the share link; falls back to the current page. */
+  siteUrl?: string;
+};
+
+export default function BookingFlow({ apiUrl, info, owner, initialType, siteUrl }: Props) {
   const api = apiUrl.replace(/\/$/, "");
-  const [typeSlug, setTypeSlug] = useState(info.meeting_types[0]?.slug ?? "");
+  const [typeSlug, setTypeSlug] = useState(
+    info.meeting_types.find((t) => t.slug === initialType)?.slug ?? info.meeting_types[0]?.slug ?? "",
+  );
   const [tz, setTz] = useState(info.timezone);
   const [hour12, setHour12] = useState(false);
   const [month, setMonth] = useState<Month>(() => monthOf(dayKey(new Date(), info.timezone)));
@@ -133,6 +146,10 @@ export default function BookingFlow({ apiUrl, info, owner }: { apiUrl: string; i
   function chooseType(slug: string) {
     setTypeSlug(slug);
     setSlot(null);
+    // Keep the address bar on this type, so copying it shares the same meeting.
+    const url = new URL(window.location.href);
+    url.searchParams.set("type", slug);
+    window.history.replaceState(null, "", url);
   }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
@@ -177,6 +194,7 @@ export default function BookingFlow({ apiUrl, info, owner }: { apiUrl: string; i
   }
 
   if (!type) return null;
+  const shareUrl = siteUrl ? `${siteUrl.replace(/\/$/, "")}/book?type=${type.slug}` : undefined;
   const chosen = slot ? new Date(slot) : null;
   const chosenEnd = chosen ? new Date(chosen.getTime() + type.duration_minutes * 60000) : null;
 
@@ -219,6 +237,31 @@ export default function BookingFlow({ apiUrl, info, owner }: { apiUrl: string; i
           </li>
         </ul>
         {type.description && <p className="bk-type-desc">{type.description}</p>}
+
+        {step === "pick" && (
+          <ShareProject
+            key={type.slug}
+            className="bk-share"
+            url={shareUrl}
+            title={`Book a ${type.title.toLowerCase()} with ${owner.name}`}
+            text={`${type.duration_minutes}-minute video call. Pick a time that suits you:`}
+            label="Share booking link"
+            noun="booking"
+          />
+        )}
+
+        {step === "pick" && info.meeting_types.length > 1 && (
+          <div className="field bk-type-select">
+            <label htmlFor="bk-type">Meeting type</label>
+            <select id="bk-type" value={type.slug} onChange={(e) => chooseType(e.target.value)}>
+              {info.meeting_types.map((t) => (
+                <option key={t.slug} value={t.slug}>
+                  {t.title} · {t.duration_minutes} min
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
 
         {step === "pick" && info.meeting_types.length > 1 && (
           <fieldset className="bk-types">

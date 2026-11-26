@@ -229,6 +229,7 @@ export const RESOURCES: Resource[] = [
     badges: (t) => (t.is_active ? [{ text: "Active", tone: "live" }] : [{ text: "Hidden", tone: "muted" }]),
     searchFields: ["title", "description"],
     defaults: { duration_minutes: 30, is_active: true },
+    publicPath: (t) => (t.is_active ? `/book?type=${t.slug}` : null),
     sections: [
       {
         title: "Meeting type",
