@@ -9,7 +9,20 @@ import { DJANGO_URL, SESSION_COOKIE } from "@/lib/admin/session";
 
 export const dynamic = "force-dynamic";
 
-const FIELDS = ["type", "name", "path", "referrer", "source", "language", "session", "id", "seconds"] as const;
+const FIELDS = [
+  "type",
+  "name",
+  "target",
+  "path",
+  "referrer",
+  "source",
+  "language",
+  "session",
+  "id",
+  "seconds",
+  "scroll",
+  "returning",
+] as const;
 
 function decode(value: string | null) {
   if (!value) return "";
