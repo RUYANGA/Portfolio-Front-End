@@ -4,6 +4,7 @@ import CertificateGallery from "@/components/site/CertificateGallery";
 import ContactForm from "@/components/site/ContactForm";
 import TypedHeadline from "@/components/site/TypedHeadline";
 import CopyEmail from "@/components/site/CopyEmail";
+import LabGallery from "@/components/site/LabGallery";
 import Footer from "@/components/site/Footer";
 import Header from "@/components/site/Header";
 import {
@@ -54,7 +55,7 @@ function SectionHead({ id, eyebrow, title, lede }: { id: string; eyebrow: string
 }
 
 export default async function HomePage() {
-  const { profile, experiences, projects, skill_groups, education, certifications, contact_subjects } = await getPortfolio();
+  const { profile, experiences, projects, labs = [], skill_groups, education, certifications, contact_subjects } = await getPortfolio();
 
   const inProduction = projects.filter((p) => p.status === "production");
   const live = inProduction.filter((p) => p.url);
@@ -65,6 +66,9 @@ export default async function HomePage() {
   const current = experiences.find((e) => e.is_current) ?? experiences[0];
   const years = profile.years_experience ?? profile.summary.match(/(\d+)\+?\s*years/i)?.[1];
   const skillCount = skill_groups.reduce((n, g) => n + g.skills.length, 0);
+  const labServices = new Set(labs.flatMap((l) => l.services)).size;
+  const labTopics = new Set(labs.map((l) => l.category)).size;
+  const labProviders = [...new Set(labs.map((l) => l.provider))].join(" & ");
 
   const stats = [
     years && { value: `${years}+`, label: "Years building production software" },
@@ -340,8 +344,37 @@ export default async function HomePage() {
           </div>
         </section>
 
+        {/* ---------- Cloud labs ---------- */}
+        {labs.length > 0 && (
+          <section id="labs" className="section section-alt" aria-labelledby="labs-title">
+            <div className="wrap">
+              <SectionHead
+                id="labs-title"
+                eyebrow="Cloud labs"
+                title={`Hands-on ${labProviders} infrastructure`}
+                lede="Production-style AWS environments I designed and deployed end to end: written as code, delivered from Git, and built to the security and reliability standards a real client expects."
+              />
+              <dl className="lab-stats" data-reveal>
+                <div>
+                  <dt>Labs delivered</dt>
+                  <dd>{labs.length}</dd>
+                </div>
+                <div>
+                  <dt>Services & tools used</dt>
+                  <dd>{labServices}</dd>
+                </div>
+                <div>
+                  <dt>Cloud disciplines covered</dt>
+                  <dd>{labTopics}</dd>
+                </div>
+              </dl>
+              <LabGallery labs={labs} />
+            </div>
+          </section>
+        )}
+
         {/* ---------- Skills ---------- */}
-        <section id="skills" className="section section-alt" aria-labelledby="skills-title">
+        <section id="skills" className={`section${labs.length > 0 ? "" : " section-alt"}`} aria-labelledby="skills-title">
           <div className="wrap">
             <SectionHead
               id="skills-title"

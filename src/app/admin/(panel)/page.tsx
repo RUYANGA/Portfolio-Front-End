@@ -5,10 +5,10 @@ import {
   Award,
   Briefcase,
   Check,
+  Cloud,
   Code,
   FileText,
   Folder,
-  GraduationCap,
   InboxIcon,
   Plus,
   Star,
@@ -94,12 +94,13 @@ export default async function OverviewPage() {
     { label: "Experience", value: counts.experiences, note: counts.experiences === 1 ? "role" : "roles", href: "/admin/experience", icon: Briefcase },
     { label: "Skill groups", value: counts.skill_groups, note: "in the toolkit", href: "/admin/skills", icon: Code },
     { label: "Certifications", value: counts.certifications, note: "on the site", href: "/admin/certifications", icon: Award },
-    { label: "Education", value: counts.education, note: counts.education === 1 ? "entry" : "entries", href: "/admin/education", icon: GraduationCap },
+    { label: "Cloud labs", value: counts.labs ?? 0, note: "hands-on builds", href: "/admin/labs", icon: Cloud },
     { label: "Messages", value: counts.messages, note: `${counts.unread_messages} unread`, href: "/admin/messages", icon: InboxIcon, highlight: counts.unread_messages > 0 },
   ];
 
   const actions = [
     { label: "New project", href: "/admin/projects/new", icon: Folder },
+    { label: "Add cloud lab", href: "/admin/labs/new", icon: Cloud },
     { label: "Add certification", href: "/admin/certifications/new", icon: Award },
     { label: "Add experience", href: "/admin/experience/new", icon: Briefcase },
     { label: "Edit profile", href: "/admin/profile", icon: UserIcon },

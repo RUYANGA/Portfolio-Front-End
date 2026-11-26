@@ -105,6 +105,44 @@ export const RESOURCES: Resource[] = [
     ],
   },
   {
+    key: "labs",
+    endpoint: "labs",
+    label: "Cloud labs",
+    singular: "lab",
+    description: "Hands-on cloud labs, shown in their own section after the projects. The first three highlights appear on each card.",
+    titleField: "title",
+    subtitle: (l) => [l.category, l.completed].filter(Boolean).join(" · "),
+    thumbField: "diagram",
+    badges: (l) => (l.provider ? [{ text: String(l.provider), tone: "accent" as const }] : []),
+    searchFields: ["title", "category", "summary"],
+    defaults: { provider: "AWS", highlights: [], services: [] },
+    sections: [
+      {
+        title: "Basics",
+        fields: [
+          { name: "title", label: "Title", type: "text", required: true, help: "Say what was built, e.g. “Secure Multi-AZ Network for an Order System”." },
+          { name: "category", label: "Topic", type: "text", required: true, half: true, placeholder: "e.g. Networking & security", help: "Labs with the same topic are grouped in the filter." },
+          { name: "provider", label: "Cloud provider", type: "text", required: true, half: true, placeholder: "AWS" },
+          { name: "completed", label: "Completed", type: "text", half: true, placeholder: "e.g. Oct 2026" },
+          { name: "repo_url", label: "Repository", type: "url", half: true, placeholder: "https://github.com/…" },
+        ],
+      },
+      {
+        title: "Architecture diagram",
+        description: "Shown on the card; visitors can open it full size. Wide images work best.",
+        fields: [{ name: "diagram", label: "Diagram", type: "image" }],
+      },
+      {
+        title: "Details",
+        fields: [
+          { name: "summary", label: "Summary", type: "textarea", required: true, rows: 4, help: "Two or three sentences: what you built and why." },
+          { name: "highlights", label: "Key outcomes", type: "lines", help: "One outcome per item. The first three show on the card." },
+          { name: "services", label: "Services used", type: "tags", placeholder: "Add a service and press Enter, e.g. Amazon VPC" },
+        ],
+      },
+    ],
+  },
+  {
     key: "experience",
     endpoint: "experiences",
     label: "Experience",
