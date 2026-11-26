@@ -56,21 +56,3 @@ export function zoneOffset(timeZone: string, at = new Date()) {
     .find((p) => p.type === "timeZoneName");
   return part?.value.replace("GMT", "UTC") || "";
 }
-
-/** Google and Outlook "add to calendar" links, for the confirmation screen. */
-export function calendarLinks(title: string, start: Date, end: Date, details: string, location: string) {
-  const stamp = (d: Date) => d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
-  const google = new URL("https://calendar.google.com/calendar/render");
-  google.search = new URLSearchParams({ action: "TEMPLATE", text: title, dates: `${stamp(start)}/${stamp(end)}`, details, location }).toString();
-  const outlook = new URL("https://outlook.live.com/calendar/0/deeplink/compose");
-  outlook.search = new URLSearchParams({
-    path: "/calendar/action/compose",
-    rru: "addevent",
-    subject: title,
-    startdt: start.toISOString(),
-    enddt: end.toISOString(),
-    body: details,
-    location,
-  }).toString();
-  return { google: google.toString(), outlook: outlook.toString() };
-}

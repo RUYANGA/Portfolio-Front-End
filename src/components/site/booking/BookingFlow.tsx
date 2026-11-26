@@ -22,7 +22,6 @@ import {
   BookingInfo,
   type MeetingType,
   BookingResult,
-  calendarLinks,
   dayKey,
   formatDay,
   formatTime,
@@ -559,8 +558,6 @@ export default function BookingFlow({ apiUrl, info, owner, initialType, siteUrl 
 function Confirmation({ result, tz, hour12, owner }: { result: BookingResult; tz: string; hour12: boolean; owner: string }) {
   const start = new Date(result.start);
   const end = new Date(result.end);
-  const location = result.meeting_link || "Video call";
-  const links = calendarLinks(`${result.title} with ${owner}`, start, end, "", location);
   return (
     <div className="bk-done" role="status">
       <svg className="success-check" viewBox="0 0 52 52" aria-hidden="true">
@@ -569,7 +566,7 @@ function Confirmation({ result, tz, hour12, owner }: { result: BookingResult; tz
       </svg>
       <h3>You&apos;re booked, {result.name.split(" ")[0]}</h3>
       <p className="bk-muted">
-        A calendar invitation is on its way to <strong>{result.email}</strong>.
+        It&apos;s in your calendar: an invitation was sent to <strong>{result.email}</strong>.
       </p>
       <dl className="bk-done-details">
         <div>
@@ -591,14 +588,6 @@ function Confirmation({ result, tz, hour12, owner }: { result: BookingResult; tz
           <dd>{result.meeting_link ? <a href={result.meeting_link}>{result.meeting_link.replace(/^https?:\/\//, "")}</a> : "Video call, link in your invitation"}</dd>
         </div>
       </dl>
-      <div className="bk-done-actions">
-        <a className="button button-secondary button-sm" href={links.google} target="_blank" rel="noreferrer">
-          Add to Google Calendar
-        </a>
-        <a className="button button-secondary button-sm" href={links.outlook} target="_blank" rel="noreferrer">
-          Add to Outlook
-        </a>
-      </div>
       <p className="bk-muted bk-small">
         Need to cancel? <Link href={`/book/manage/${result.manage_token}`}>Manage this booking</Link>. The link is in your email too.
       </p>
