@@ -6,11 +6,24 @@ type Token = { cls: "k" | "s" | "l" | "p" | "t"; text: string };
 type Line = Token[];
 
 type State =
-  | { kind: "loading" }
-  | { kind: "ok"; ms: number; lines: Line[] }
-  | { kind: "offline"; lines: Line[] };
+  | { kind: "loading"; path: string }
+  | { kind: "ok"; path: string; ms: number; lines: Line[] }
+  | { kind: "offline"; path: string; lines: Line[] };
 
-const PATH = "/api/profile/";
+/**
+ * Real endpoints of the Django API, requested in turn: each "Send again" calls the next one,
+ * and several return a random record, so every response is fresh data from the database.
+ */
+const ENDPOINTS = [
+  "/api/profile/",
+  "/api/projects/random/",
+  "/api/labs/random/",
+  "/api/experience/current/",
+  "/api/skills/random/",
+  "/api/certifications/random/",
+  "/api/stats/",
+];
+const FALLBACK_PATH = ENDPOINTS[0];
 
 /** Turns a JSON value into coloured lines, so each line can animate in on its own. */
 function toLines(value: unknown): Line[] {
@@ -59,8 +72,10 @@ function toLines(value: unknown): Line[] {
 }
 
 export default function LiveApi({ apiUrl, fallback }: { apiUrl: string; fallback: unknown }) {
-  const [state, setState] = useState<State>({ kind: "loading" });
   const [run, setRun] = useState(0);
+  const path = ENDPOINTS[run % ENDPOINTS.length];
+  const nextPath = ENDPOINTS[(run + 1) % ENDPOINTS.length];
+  const [state, setState] = useState<State>({ kind: "loading", path });
 
   useEffect(() => {
     // Each run owns its request; a newer run or unmounting makes older results ignored.
@@ -68,16 +83,17 @@ export default function LiveApi({ apiUrl, fallback }: { apiUrl: string; fallback
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 6000);
     const started = performance.now();
-    setState({ kind: "loading" });
+    setState({ kind: "loading", path });
 
-    fetch(`${apiUrl.replace(/\/$/, "")}${PATH}`, { signal: controller.signal, cache: "no-store" })
+    fetch(`${apiUrl.replace(/\/$/, "")}${path}`, { signal: controller.signal, cache: "no-store" })
       .then(async (res) => {
         if (!res.ok) throw new Error(String(res.status));
         const data = await res.json();
-        if (current) setState({ kind: "ok", ms: Math.round(performance.now() - started), lines: toLines(data) });
+        if (current) setState({ kind: "ok", path, ms: Math.round(performance.now() - started), lines: toLines(data) });
       })
       .catch(() => {
-        if (current) setState({ kind: "offline", lines: toLines(fallback) });
+        // Unreachable API (or an endpoint it doesn't have yet): show the saved profile response.
+        if (current) setState({ kind: "offline", path: FALLBACK_PATH, lines: toLines(fallback) });
       })
       .finally(() => clearTimeout(timer));
 
@@ -86,7 +102,7 @@ export default function LiveApi({ apiUrl, fallback }: { apiUrl: string; fallback
       clearTimeout(timer);
       controller.abort();
     };
-  }, [apiUrl, fallback, run]);
+  }, [apiUrl, fallback, path, run]);
 
   const lines = state.kind === "loading" ? [] : state.lines;
 
@@ -99,7 +115,7 @@ export default function LiveApi({ apiUrl, fallback }: { apiUrl: string; fallback
           <i />
         </span>
         <span className="api-method">GET</span>
-        <span className="api-path">{PATH}</span>
+        <span className="api-path">{state.path}</span>
         <span className="api-status" data-state={state.kind} aria-live="polite">
           {state.kind === "loading" && (
             <span className="api-pending">
@@ -137,13 +153,17 @@ export default function LiveApi({ apiUrl, fallback }: { apiUrl: string; fallback
         <span>
           {state.kind === "offline"
             ? "The API didn't answer just now, so this is the last saved response."
-            : "Served live by the Django REST API behind this portfolio."}
+            : "Served live from the database by the Django REST API behind this portfolio."}
+          <span className="api-next">
+            Next: <code>GET {nextPath}</code>
+          </span>
         </span>
         <button
           type="button"
           className="api-replay"
           onClick={() => setRun((n) => n + 1)}
           disabled={state.kind === "loading"}
+          aria-label={`Send the next request: GET ${nextPath}`}
         >
           Send again
         </button>
