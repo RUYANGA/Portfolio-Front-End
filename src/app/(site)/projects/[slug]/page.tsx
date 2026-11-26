@@ -26,8 +26,16 @@ export const revalidate = 60;
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const project = await getProject(params.slug);
-  if (!project) return { title: "Project not found" };
-  return { title: project.title, description: project.tagline };
+  if (!project) return { title: "Project not found", robots: { index: false } };
+  const description = `${project.tagline} ${project.description}`.slice(0, 300);
+  return {
+    title: project.title,
+    description,
+    keywords: [project.title, ...project.stack, "case study"],
+    alternates: { canonical: `/projects/${project.slug}` },
+    openGraph: { type: "article", url: `/projects/${project.slug}`, title: project.title, description: project.tagline },
+    twitter: { card: "summary_large_image", title: project.title, description: project.tagline },
+  };
 }
 
 export default async function ProjectPage({ params }: Params) {
@@ -37,8 +45,23 @@ export default async function ProjectPage({ params }: Params) {
   const index = projects.findIndex((p) => p.slug === project.slug);
   const next = projects.length > 1 ? projects[(index + 1) % projects.length] : null;
 
+  const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || "").replace(/\/$/, "");
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    name: project.title,
+    headline: project.tagline,
+    description: project.description,
+    url: `${siteUrl}/projects/${project.slug}`,
+    image: project.cover_image || `${siteUrl}/opengraph-image`,
+    keywords: project.stack.join(", "),
+    author: { "@type": "Person", name: profile.name, url: siteUrl },
+    ...(project.url ? { sameAs: project.url } : {}),
+  };
+
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       <Header name={profile.name} cvUrl={profile.cv_file || DEFAULT_CV_PATH} />
       <main id="main" className="project-page">
         <article className="wrap">
