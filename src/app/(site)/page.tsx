@@ -188,8 +188,20 @@ export default async function HomePage() {
               </div>
               <aside className="card glance" data-reveal style={delay(100)} aria-label="At a glance">
                 {profile.photo && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img className="glance-photo" src={profile.photo} alt={profile.name} />
+                  <div className="glance-head">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img className="glance-photo" src={profile.photo} alt={profile.name} />
+                    <div className="glance-who">
+                      <p className="glance-name">{profile.name}</p>
+                      <p className="glance-title">{profile.title}</p>
+                      {profile.available_for_work && (
+                        <span className="badge badge-live badge-sm">
+                          <span className="live-dot" aria-hidden="true" />
+                          Open to work
+                        </span>
+                      )}
+                    </div>
+                  </div>
                 )}
                 <p className="card-label">At a glance</p>
                 <dl className="glance-list">
