@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Analytics from "@/components/site/Analytics";
 import RevealObserver from "@/components/site/RevealObserver";
 import { getPortfolio } from "@/lib/api";
 import "@/styles/globals.css";
@@ -121,6 +122,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         </a>
         {children}
         <RevealObserver />
+        <Analytics />
       </body>
     </html>
   );

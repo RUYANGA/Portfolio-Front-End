@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import type { Lab } from "@/lib/api/types";
 import Modal from "@/components/ui/Modal";
+import { track } from "@/lib/analytics";
 import { ArrowRight, ArrowUpRight, Check, Cloud, GitHub } from "@/components/ui/Icons";
 
 /**
@@ -12,6 +13,10 @@ import { ArrowRight, ArrowUpRight, Check, Cloud, GitHub } from "@/components/ui/
 export default function LabGallery({ labs }: { labs: Lab[] }) {
   const [topic, setTopic] = useState<string>("all");
   const [open, setOpen] = useState<Lab | null>(null);
+  const openLab = (lab: Lab) => {
+    setOpen(lab);
+    track("lab_open");
+  };
 
   const topics = useMemo(() => {
     const counts = new Map<string, number>();
@@ -43,7 +48,7 @@ export default function LabGallery({ labs }: { labs: Lab[] }) {
       <ul className="lab-grid" aria-live="polite">
         {shown.map((lab) => (
           <li key={lab.title} className="card lab-card">
-            <button type="button" className="lab-visual" onClick={() => setOpen(lab)} tabIndex={-1} aria-hidden="true">
+            <button type="button" className="lab-visual" onClick={() => openLab(lab)} tabIndex={-1} aria-hidden="true">
               {lab.diagram ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={lab.diagram} alt="" loading="lazy" decoding="async" />
@@ -62,7 +67,7 @@ export default function LabGallery({ labs }: { labs: Lab[] }) {
               </p>
               <h3 className="lab-title">{lab.title}</h3>
               <p className="lab-summary is-clamped">{lab.summary}</p>
-              <button type="button" className="lab-details-btn" onClick={() => setOpen(lab)} aria-label={`View details: ${lab.title}`}>
+              <button type="button" className="lab-details-btn" onClick={() => openLab(lab)} aria-label={`View details: ${lab.title}`}>
                 View details
                 <ArrowRight size={16} />
               </button>

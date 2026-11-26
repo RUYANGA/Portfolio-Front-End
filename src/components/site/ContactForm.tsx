@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { track } from "@/lib/analytics";
 
 type Errors = Partial<Record<"name" | "email" | "subject" | "message" | "form", string>>;
 
@@ -25,6 +26,7 @@ export default function ContactForm({ apiUrl, email, subjects = [] }: { apiUrl: 
       if (res.ok) {
         form.reset();
         setSent(true);
+        track("contact");
         return;
       }
       if (res.status === 429) {

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import ShareProject from "@/components/site/ShareProject";
+import { track } from "@/lib/analytics";
 import {
   ArrowLeft,
   ArrowRight,
@@ -220,6 +221,7 @@ export default function BookingFlow({ apiUrl, info, owner, initialType, siteUrl 
       const data = await res.json().catch(() => ({}));
       if (res.ok) {
         setResult(data as BookingResult);
+        track("booking");
         setStep("done");
         window.scrollTo({ top: 0, behavior: "smooth" });
         return;
