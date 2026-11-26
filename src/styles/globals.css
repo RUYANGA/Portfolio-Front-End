@@ -3283,6 +3283,241 @@ html.has-modal {
   }
 }
 
+/* ---------- Share buttons ---------- */
+.share {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1.75rem;
+  padding: 1.25rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg-alt);
+}
+
+.share-heading {
+  font-size: 0.875rem;
+  font-weight: 650;
+  color: var(--ink);
+}
+
+.share-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.share-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-width: 42px;
+  height: 42px;
+  padding: 0 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink-2);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s, background-color 0.15s, transform 0.15s;
+}
+
+.share-btn:hover {
+  color: var(--accent-text);
+  border-color: var(--card-hover-border, var(--line-strong));
+  background: var(--accent-soft);
+  transform: translateY(-1px);
+}
+
+.share-native,
+.share-copy.is-copied {
+  border-color: transparent;
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.share-native:hover {
+  background: var(--accent-hover);
+  color: var(--accent-ink);
+}
+
+.share-copy.is-copied:hover {
+  color: var(--accent-ink);
+  background: var(--accent);
+}
+
+/* Footer: one compact row */
+.footer-share {
+  padding-block: 1.25rem 0.25rem;
+}
+
+.share-compact {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1.25rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+}
+
+.share-compact .share-heading {
+  color: var(--ink-2);
+  font-weight: 600;
+}
+
+.share-compact .share-btn {
+  min-width: 38px;
+  height: 38px;
+  padding: 0;
+}
+
+/* ---------- Project page: Share button and panel ---------- */
+.share-project {
+  position: relative;
+}
+
+.share-project-btn.is-copied {
+  border-color: transparent;
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.share-pop {
+  position: absolute;
+  top: calc(100% + 0.6rem);
+  left: 0;
+  z-index: 40;
+  display: grid;
+  gap: 0.85rem;
+  width: min(360px, calc(100vw - 2 * var(--gutter)));
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow-lg);
+  animation: enter-up 0.18s var(--ease);
+}
+
+.share-pop-title {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.45rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.45;
+  color: var(--ink);
+}
+
+.share-pop-title svg {
+  flex: none;
+  margin-top: 2px;
+  color: var(--live-text);
+}
+
+.share-pop-link {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  background: var(--bg-alt);
+  overflow: hidden;
+}
+
+.share-pop-link input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.6rem 0.75rem;
+  border: 0;
+  background: none;
+  color: var(--ink-2);
+  font: inherit;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  outline: none;
+}
+
+.share-pop-link button {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  align-self: stretch;
+  border: 0;
+  border-left: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink-2);
+  cursor: pointer;
+}
+
+.share-pop-link button:hover {
+  color: var(--accent-text);
+}
+
+.share-pop-targets {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.4rem;
+}
+
+.share-pop-target {
+  display: grid;
+  justify-items: center;
+  gap: 0.35rem;
+  padding: 0.6rem 0.25rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--ink-2);
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.share-pop-target:hover {
+  border-color: var(--line);
+  background: var(--accent-soft);
+  color: var(--accent-text);
+}
+
+.share-pop-icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+
+@media (max-width: 560px) {
+  .share-project,
+  .share-project-btn {
+    width: 100%;
+  }
+  .share-pop {
+    width: 100%;
+  }
+}
+
+/* The entry animation gives the header actions their own stacking context; lift it above the
+   project image below so the share panel isn't covered. */
+.project-header {
+  position: relative;
+  z-index: 5;
+}
+
+.project-header .actions {
+  position: relative;
+  z-index: 5;
+}
+
 /* Contact: one or two email addresses, stacked */
 .contact-emails {
   display: grid;
