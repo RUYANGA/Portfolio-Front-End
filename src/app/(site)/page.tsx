@@ -117,6 +117,10 @@ export default async function HomePage() {
                 <a className="button button-secondary button-lg" href="#projects">
                   View my work
                 </a>
+                <Link className="hero-book" href="/book">
+                  Book a call
+                  <ArrowRight size={16} />
+                </Link>
               </div>
               <ul className="hero-meta hero-enter" style={delay(360)}>
                 <li>
@@ -480,6 +484,19 @@ export default async function HomePage() {
                     </span>
                   </li>
                 </ul>
+                <Link href="/book" className="book-cta">
+                  <span className="book-cta-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <rect x="3" y="4" width="18" height="18" rx="2" />
+                      <path d="M16 2v4M8 2v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01" />
+                    </svg>
+                  </span>
+                  <span className="book-cta-text">
+                    <strong>Prefer to talk?</strong>
+                    <span>Book a video call at a time that suits you. You&apos;ll get a calendar invitation straight away.</span>
+                  </span>
+                  <ArrowRight size={18} className="book-cta-arrow" />
+                </Link>
               </div>
               <div className="contact-form-wrap">
                 <ContactForm apiUrl={PUBLIC_API} email={profile.email} subjects={contact_subjects ?? []} />
