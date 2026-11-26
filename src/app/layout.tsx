@@ -68,6 +68,9 @@ async function structuredData() {
       url: siteUrl,
       image: profile.photo || `${siteUrl}/opengraph-image`,
       email: profile.email ? `mailto:${profile.email}` : undefined,
+      contactPoint: profile.secondary_email
+        ? [{ "@type": "ContactPoint", contactType: "general enquiries", email: profile.secondary_email }]
+        : undefined,
       address: profile.location ? { "@type": "PostalAddress", addressLocality: profile.location } : undefined,
       sameAs,
       knowsAbout: skill_groups.flatMap((g) => g.skills).slice(0, 30),
