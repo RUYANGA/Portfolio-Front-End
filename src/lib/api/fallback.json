@@ -288,6 +288,154 @@
       "featured": false
     }
   ],
+  "labs": [
+    {
+      "title": "Resilient Delivery-Photo Platform with Cross-Region Recovery",
+      "category": "Storage & disaster recovery",
+      "summary": "Production-style platform that stores proof-of-delivery photos for a logistics client. Photos live in a private, versioned S3 bucket replicated to a second region, order details in Multi-AZ PostgreSQL, and the app runs on ECS Fargate behind CloudFront and AWS WAF, released blue/green through CodePipeline.",
+      "highlights": [
+        "Cross-Region Replication to a Glacier Instant Retrieval bucket, with bucket policies that block permanent deletes",
+        "Multi-AZ RDS PostgreSQL with rotating Secrets Manager credentials, 7-day point-in-time restore and AWS Backup copies to a second region",
+        "CloudFront as the only public entry point: Origin Access Control for media, WAF rejects requests that bypass the CDN",
+        "Blue/green releases with CodeDeploy, alarm-based rollback and one-click redeploy of any of the last 10 versions"
+      ],
+      "services": [
+        "Amazon S3",
+        "CloudFront",
+        "AWS WAF",
+        "ECS Fargate",
+        "Amazon RDS",
+        "AWS Backup",
+        "Secrets Manager",
+        "CodePipeline",
+        "CodeDeploy",
+        "CloudFormation"
+      ],
+      "repo_url": "https://github.com/RUYANGA/AWS-Onward-Delivery-Photos-Storage-Infra",
+      "completed": "Nov 2026",
+      "provider": "AWS"
+    },
+    {
+      "title": "Zero-Downtime Container Platform on ECS Fargate",
+      "category": "Containers & CI/CD",
+      "summary": "Containerised order service running in private subnets with no internet route, released blue/green from GitHub to ECS. Five CloudFormation stacks separate network, delivery foundation, service and release pipeline, all deployed by Git sync.",
+      "highlights": [
+        "GitHub Actions pushes images to ECR with short-lived OIDC credentials: no AWS access keys anywhere",
+        "CodePipeline with a manual approval gate, then CodeDeploy blue/green with automatic rollback on 5xx alarms",
+        "Tasks reach AWS only through VPC endpoints; no NAT gateway, no public IPs",
+        "Target-tracking auto scaling from 2 to 6 tasks, verified under load and during a simulated AZ failure"
+      ],
+      "services": [
+        "ECS Fargate",
+        "Amazon ECR",
+        "Application Load Balancer",
+        "CodePipeline",
+        "CodeDeploy",
+        "EventBridge",
+        "VPC Endpoints",
+        "IAM OIDC",
+        "CloudWatch",
+        "CloudFormation"
+      ],
+      "repo_url": "https://github.com/RUYANGA/AWS-Onward-Order-Infra-Lab3-A",
+      "completed": "Nov 2026",
+      "provider": "AWS"
+    },
+    {
+      "title": "Auto-Scaling Order System for Peak Sales Days",
+      "category": "High availability & scaling",
+      "summary": "EC2-based order system built to survive sales-day traffic: servers across two Availability Zones behind a load balancer, scaling on CPU, and bootstrapped entirely from user data with no SSH. One CloudFormation template, deployed by Git sync, with a costed estimate of USD 129 a month.",
+      "highlights": [
+        "Auto Scaling group with CPU target tracking and rolling replacement that keeps a server in service during releases",
+        "Servers install and start the app at boot from a pinned Git tag, then signal CloudFormation when healthy",
+        "No key pairs or port 22: administration through Session Manager, IMDSv2 required",
+        "Scripted demos for load testing, server failure and full Availability Zone failure"
+      ],
+      "services": [
+        "Amazon EC2",
+        "Auto Scaling",
+        "Application Load Balancer",
+        "Amazon VPC",
+        "NAT Gateway",
+        "Systems Manager",
+        "CloudWatch",
+        "CloudFormation"
+      ],
+      "repo_url": "https://github.com/RUYANGA/AWS-onward-orders-infrastructure-Lab3-B",
+      "completed": "Nov 2026",
+      "provider": "AWS"
+    },
+    {
+      "title": "Secure Multi-AZ Network for an Order System",
+      "category": "Networking & security",
+      "summary": "Highly available, private-by-default VPC for an order system. Customers reach the front end through a load balancer spanning two Availability Zones, internal services have no inbound path from the internet, and engineers manage every server without open ports or keys.",
+      "highlights": [
+        "Six subnets across two AZs (public, web, internal) with a NAT gateway per AZ and a free S3 gateway endpoint",
+        "Chained security groups: internet to ALB, ALB to web tier, web tier to internal services only",
+        "VPC Flow Logs, a monthly AWS Budgets alert and a written cost analysis",
+        "Every requirement traced to the template line that meets it"
+      ],
+      "services": [
+        "Amazon VPC",
+        "Application Load Balancer",
+        "Auto Scaling",
+        "NAT Gateway",
+        "Security Groups",
+        "Systems Manager",
+        "VPC Flow Logs",
+        "AWS Budgets",
+        "CloudFormation"
+      ],
+      "repo_url": "https://github.com/RUYANGA/AWS-Network-Lab2",
+      "completed": "Oct 2026",
+      "provider": "AWS"
+    },
+    {
+      "title": "Keyless Container Delivery to Amazon ECR",
+      "category": "Containers & CI/CD",
+      "summary": "CI/CD for a Django REST API: every pull request is linted, tested and smoke-tested in Docker, and every merge to main publishes an image to Amazon ECR using GitHub OIDC instead of stored credentials.",
+      "highlights": [
+        "GitHub Actions assumes an IAM role through OIDC, limited to the main branch",
+        "Images tagged with the commit SHA and pushed only once per commit",
+        "ECR lifecycle policy keeps the 20 most recent images and expires untagged layers",
+        "CodeBuild buildspecs for running the same build and tests inside AWS"
+      ],
+      "services": [
+        "Amazon ECR",
+        "IAM OIDC",
+        "GitHub Actions",
+        "CodeBuild",
+        "Docker",
+        "Django",
+        "PostgreSQL"
+      ],
+      "repo_url": "https://github.com/RUYANGA/AWS-Deployment--ecr1",
+      "completed": "Oct 2026",
+      "provider": "AWS"
+    },
+    {
+      "title": "GitOps Identity & Access Onboarding",
+      "category": "Identity & access",
+      "summary": "Repeatable, auditable onboarding of engineers into an AWS account, managed entirely as code. Every access change goes through Git, is deployed by CloudFormation Git sync, capped by permission boundaries and recorded by CloudTrail.",
+      "highlights": [
+        "Least privilege by ceiling: permission boundaries hold even if a broader policy is attached later",
+        "Permissions granted to groups through AWS managed policies only, with no inline policies",
+        "First-login passwords generated by Secrets Manager, never stored in Git",
+        "Multi-region CloudTrail to an encrypted, versioned bucket with log file validation"
+      ],
+      "services": [
+        "AWS IAM",
+        "Permission Boundaries",
+        "Secrets Manager",
+        "CloudTrail",
+        "Amazon S3",
+        "CloudFormation Git sync"
+      ],
+      "repo_url": "https://github.com/RUYANGA/AWS-Lab1",
+      "completed": "Oct 2026",
+      "provider": "AWS"
+    }
+  ],
   "education": [
     {
       "degree": "BSc in Computer Science",

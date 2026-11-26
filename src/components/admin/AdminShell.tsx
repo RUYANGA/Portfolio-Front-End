@@ -8,6 +8,7 @@ import {
   Award,
   Briefcase,
   ChevronRight,
+  Cloud,
   Code,
   Folder,
   GraduationCap,
@@ -22,7 +23,7 @@ import ThemeToggle from "@/components/ui/ThemeToggle";
 import type { AdminUser } from "@/lib/admin/session";
 import { FeedbackProvider, useFeedback } from "./Feedback";
 
-export type NavCounts = Partial<Record<"projects" | "experiences" | "skill_groups" | "education" | "certifications" | "unread_messages", number>>;
+export type NavCounts = Partial<Record<"projects" | "labs" | "experiences" | "skill_groups" | "education" | "certifications" | "unread_messages", number>>;
 
 type NavItem = { href: string; label: string; icon: (p: { size?: number }) => JSX.Element; exact?: boolean; count?: keyof NavCounts; badge?: boolean };
 
@@ -40,6 +41,7 @@ const NAV: { title: string; items: NavItem[] }[] = [
     items: [
       { href: "/admin/profile", label: "Profile & site text", icon: UserIcon },
       { href: "/admin/projects", label: "Projects", icon: Folder, count: "projects" },
+      { href: "/admin/labs", label: "Cloud labs", icon: Cloud, count: "labs" },
       { href: "/admin/experience", label: "Experience", icon: Briefcase, count: "experiences" },
       { href: "/admin/skills", label: "Skills", icon: Code, count: "skill_groups" },
       { href: "/admin/education", label: "Education", icon: GraduationCap, count: "education" },
@@ -51,6 +53,7 @@ const NAV: { title: string; items: NavItem[] }[] = [
 const LABELS: Record<string, string> = {
   profile: "Profile & site text",
   projects: "Projects",
+  labs: "Cloud labs",
   experience: "Experience",
   skills: "Skills",
   education: "Education",

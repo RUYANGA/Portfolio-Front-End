@@ -58,6 +58,18 @@ export type Project = {
   featured: boolean;
 };
 
+export type Lab = {
+  title: string;
+  category: string;
+  provider: string;
+  summary: string;
+  highlights: string[];
+  services: string[];
+  repo_url: string;
+  diagram: string | null;
+  completed: string;
+};
+
 export type Education = { degree: string; institution: string; period: string; coursework: string };
 
 export type Certification = {
@@ -73,6 +85,8 @@ export type Portfolio = {
   skill_groups: SkillGroup[];
   experiences: Experience[];
   projects: Project[];
+  /** Hands-on cloud labs; optional so an older API without them still works. */
+  labs?: Lab[];
   education: Education[];
   certifications: Certification[];
   /** Subjects offered in the contact form (managed in the admin). */

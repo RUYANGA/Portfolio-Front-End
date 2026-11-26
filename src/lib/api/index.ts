@@ -1,5 +1,5 @@
 import fallbackData from "./fallback.json";
-import type { Portfolio, Project, ProjectStatus } from "./types";
+import type { Lab, Portfolio, Project, ProjectStatus } from "./types";
 
 const API_URL = (process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000").replace(/\/$/, "");
 
@@ -18,11 +18,13 @@ function fallback(): Portfolio {
     profile: Omit<Portfolio["profile"], "photo" | "cv_file">;
     projects: Omit<Project, "status_label" | "repo_url" | "cover_image">[];
     certifications: Omit<Portfolio["certifications"][number], "image">[];
-  } & Omit<Portfolio, "profile" | "projects" | "certifications">;
+    labs?: Omit<Lab, "diagram">[];
+  } & Omit<Portfolio, "profile" | "projects" | "certifications" | "labs">;
   return {
     ...d,
     profile: { ...d.profile, photo: null, cv_file: null },
     certifications: d.certifications.map((c) => ({ ...c, image: null })),
+    labs: (d.labs ?? []).map((l) => ({ ...l, diagram: null })),
     projects: d.projects.map((p) => ({
       ...p,
       repo_url: "",
