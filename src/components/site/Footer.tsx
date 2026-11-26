@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Profile } from "@/lib/api/types";
 import { SocialIcon } from "@/components/ui/Icons";
+import ShareButtons from "./ShareButtons";
 
 const NAV = [
   { href: "/#about", label: "About" },
@@ -56,6 +57,15 @@ export default function Footer({ profile }: { profile: Profile }) {
             ))}
           </ul>
         </div>
+      </div>
+      <div className="wrap footer-share">
+        <ShareButtons
+          compact
+          heading="Share this portfolio"
+          url={process.env.NEXT_PUBLIC_SITE_URL ? process.env.NEXT_PUBLIC_SITE_URL.replace(/\/$/, "") + "/" : undefined}
+          title={`${profile.name} | ${profile.title}`}
+          text={profile.headline}
+        />
       </div>
       <div className="wrap footer-base">
         <span>
