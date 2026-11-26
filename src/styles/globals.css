@@ -3282,3 +3282,10 @@ html.has-modal {
     font-size: 1rem;
   }
 }
+
+/* Contact: one or two email addresses, stacked */
+.contact-emails {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 0;
+}

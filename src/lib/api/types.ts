@@ -8,6 +8,7 @@ export type Profile = {
   about: string;
   location: string;
   email: string;
+  secondary_email?: string;
   phone: string;
   photo: string | null;
   cv_file: string | null;
