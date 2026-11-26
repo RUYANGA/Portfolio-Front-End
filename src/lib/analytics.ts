@@ -1,13 +1,14 @@
 "use client";
 
 /**
- * Privacy-friendly analytics for the public site: no cookies, nothing stored about the visitor
- * except a per-tab session id (sessionStorage), so page views can be grouped into visits.
+ * Privacy-friendly analytics for the public site: no cookies. The only things kept in the browser
+ * are a per-tab session id (sessionStorage), so page views can be grouped into visits, and a
+ * "has been here before" flag (localStorage) for new vs returning visitors. Neither identifies anyone.
  */
 
 const ENDPOINT = "/visit";
 
-export type EventName = "cv_download" | "booking" | "contact" | "lab_open" | "share";
+export type EventName = "cv_download" | "booking" | "contact" | "lab_open" | "share" | "section" | "outbound";
 
 function sessionId(): string {
   try {
@@ -19,6 +20,20 @@ function sessionId(): string {
     return id;
   } catch {
     return "";
+  }
+}
+
+/** Whether this browser visited before this tab's visit started (worked out once per visit). */
+function isReturning(): boolean {
+  try {
+    const known = sessionStorage.getItem("pf_ret");
+    if (known !== null) return known === "1";
+    const seen = localStorage.getItem("pf_seen") !== null;
+    localStorage.setItem("pf_seen", "1");
+    sessionStorage.setItem("pf_ret", seen ? "1" : "0");
+    return seen;
+  } catch {
+    return false;
   }
 }
 
@@ -56,6 +71,7 @@ async function sendView(path: string): Promise<number | null> {
       referrer,
       source: params.get("utm_source") || params.get("ref") || "",
       language: navigator.language,
+      returning: isReturning(),
     });
     const data = await res.json();
     return typeof data.id === "number" ? data.id : null;
@@ -64,14 +80,14 @@ async function sendView(path: string): Promise<number | null> {
   }
 }
 
-/** Update how long the visitor actually looked at a page (visible time only). */
-export function trackTime(id: number, seconds: number) {
-  const body = JSON.stringify({ type: "leave", id, seconds, session: sessionId() });
+/** Update how long the visitor looked at a page (visible time only) and how far down they got (%). */
+export function trackTime(id: number, seconds: number, scroll: number) {
+  const body = JSON.stringify({ type: "leave", id, seconds, scroll, session: sessionId() });
   if (navigator.sendBeacon?.(ENDPOINT, new Blob([body], { type: "application/json" }))) return;
   fetch(ENDPOINT, { method: "POST", headers: { "Content-Type": "application/json" }, body, keepalive: true }).catch(() => undefined);
 }
 
-/** Record an action: résumé opened, meeting booked, message sent… */
-export function track(name: EventName) {
-  post({ type: "event", name, path: window.location.pathname }, true).catch(() => undefined);
+/** Record an action: résumé opened, meeting booked, message sent, section reached, link clicked… */
+export function track(name: EventName, target = "") {
+  post({ type: "event", name, target, path: window.location.pathname }, true).catch(() => undefined);
 }
