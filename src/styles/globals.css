@@ -3282,3 +3282,97 @@ html.has-modal {
     font-size: 1rem;
   }
 }
+
+/* ---------- Share buttons ---------- */
+.share {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1.75rem;
+  padding: 1.25rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg-alt);
+}
+
+.share-heading {
+  font-size: 0.875rem;
+  font-weight: 650;
+  color: var(--ink);
+}
+
+.share-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.share-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  min-width: 42px;
+  height: 42px;
+  padding: 0 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink-2);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s, background-color 0.15s, transform 0.15s;
+}
+
+.share-btn:hover {
+  color: var(--accent-text);
+  border-color: var(--card-hover-border, var(--line-strong));
+  background: var(--accent-soft);
+  transform: translateY(-1px);
+}
+
+.share-native,
+.share-copy.is-copied {
+  border-color: transparent;
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.share-native:hover {
+  background: var(--accent-hover);
+  color: var(--accent-ink);
+}
+
+.share-copy.is-copied:hover {
+  color: var(--accent-ink);
+  background: var(--accent);
+}
+
+/* Footer: one compact row */
+.footer-share {
+  padding-block: 1.25rem 0.25rem;
+}
+
+.share-compact {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1.25rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+}
+
+.share-compact .share-heading {
+  color: var(--ink-2);
+  font-weight: 600;
+}
+
+.share-compact .share-btn {
+  min-width: 38px;
+  height: 38px;
+  padding: 0;
+}

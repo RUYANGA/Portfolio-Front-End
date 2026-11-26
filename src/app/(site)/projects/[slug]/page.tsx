@@ -6,6 +6,7 @@ import Footer from "@/components/site/Footer";
 import Header from "@/components/site/Header";
 import { ArrowLeft, ArrowRight, ArrowUpRight, GitHub } from "@/components/ui/Icons";
 import ProjectVisual from "@/components/site/ProjectVisual";
+import ShareButtons from "@/components/site/ShareButtons";
 import ZoomableImage from "@/components/site/ZoomableImage";
 import { TechTags } from "@/components/ui/TechIcon";
 import { DEFAULT_CV_PATH, getPortfolio, getProject } from "@/lib/api";
@@ -162,6 +163,12 @@ export default async function ProjectPage({ params }: Params) {
                   <ArrowRight size={16} />
                 </Link>
               </div>
+              <ShareButtons
+                heading="Share this case study"
+                url={siteUrl ? `${siteUrl}/projects/${project.slug}` : undefined}
+                title={`${project.title} by ${profile.name}`}
+                text={project.tagline}
+              />
             </div>
           </div>
 
