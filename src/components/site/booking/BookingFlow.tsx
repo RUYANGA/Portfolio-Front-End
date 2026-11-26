@@ -3,9 +3,24 @@
 import Link from "next/link";
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import ShareProject from "@/components/site/ShareProject";
-import { ArrowLeft, ArrowRight, Check, Clock, Globe } from "@/components/ui/Icons";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Briefcase,
+  Check,
+  Clock,
+  Code,
+  Globe,
+  GraduationCap,
+  Layers,
+  Search,
+  Server,
+  UserIcon,
+  Zap,
+} from "@/components/ui/Icons";
 import {
   BookingInfo,
+  type MeetingType,
   BookingResult,
   calendarLinks,
   dayKey,
@@ -15,7 +30,7 @@ import {
 } from "@/lib/api/booking";
 
 type Owner = { name: string; title: string; photo: string | null };
-type Step = "pick" | "details" | "done";
+type Step = "type" | "pick" | "details" | "done";
 type Errors = Partial<Record<"name" | "email" | "company" | "notes" | "form", string>>;
 
 const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -45,6 +60,22 @@ function shiftMonth({ year, month }: Month, delta: number): Month {
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
+/** An icon that hints at what a meeting type is for, from its name. */
+function TypeIcon({ type }: { type: MeetingType }) {
+  const key = `${type.slug} ${type.title}`.toLowerCase();
+  const props = { size: 20 };
+  if (/technical interview|coding/.test(key)) return <Code {...props} />;
+  if (/interview|job|hiring/.test(key)) return <Briefcase {...props} />;
+  if (/review|audit/.test(key)) return <Search {...props} />;
+  if (/technical|architecture/.test(key)) return <Server {...props} />;
+  if (/project|consult|freelance/.test(key)) return <Layers {...props} />;
+  if (/mentor|coach/.test(key)) return <GraduationCap {...props} />;
+  if (/quick|question/.test(key)) return <Zap {...props} />;
+  if (/collab|speak|workshop|talk/.test(key)) return <Globe {...props} />;
+  if (/intro|chat|call/.test(key)) return <UserIcon {...props} />;
+  return <Clock {...props} />;
+}
+
 type Props = {
   apiUrl: string;
   info: BookingInfo;
@@ -67,7 +98,10 @@ export default function BookingFlow({ apiUrl, info, owner, initialType, siteUrl 
   const [loadError, setLoadError] = useState("");
   const [day, setDay] = useState<string | null>(null);
   const [slot, setSlot] = useState<string | null>(null);
-  const [step, setStep] = useState<Step>("pick");
+  // Open on the list of meeting types, unless a shared link already names one (or there's only one).
+  const [step, setStep] = useState<Step>(
+    info.meeting_types.length > 1 && !info.meeting_types.some((t) => t.slug === initialType) ? "type" : "pick",
+  );
   const [errors, setErrors] = useState<Errors>({});
   const [sending, setSending] = useState(false);
   const [result, setResult] = useState<BookingResult | null>(null);
@@ -106,9 +140,10 @@ export default function BookingFlow({ apiUrl, info, owner, initialType, siteUrl 
     }
   }, [api, type, month]);
 
+  const choosingType = step === "type";
   useEffect(() => {
-    load();
-  }, [load]);
+    if (!choosingType) load();
+  }, [load, choosingType]);
 
   // Slots grouped by the visitor's local day.
   const byDay = useMemo(() => {
@@ -143,13 +178,32 @@ export default function BookingFlow({ apiUrl, info, owner, initialType, siteUrl 
     new Date(Date.UTC(month.year, month.month, 1)),
   );
 
+  function setTypeParam(slug: string | null) {
+    // Keep the address bar on the chosen type, so copying it shares the same meeting.
+    const url = new URL(window.location.href);
+    if (slug) url.searchParams.set("type", slug);
+    else url.searchParams.delete("type");
+    window.history.replaceState(null, "", url);
+  }
+
+  function scrollToCard() {
+    document.getElementById("booking")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
   function chooseType(slug: string) {
     setTypeSlug(slug);
     setSlot(null);
-    // Keep the address bar on this type, so copying it shares the same meeting.
-    const url = new URL(window.location.href);
-    url.searchParams.set("type", slug);
-    window.history.replaceState(null, "", url);
+    setNotice("");
+    setStep("pick");
+    setTypeParam(slug);
+    scrollToCard();
+  }
+
+  function changeType() {
+    setSlot(null);
+    setStep("type");
+    setTypeParam(null);
+    scrollToCard();
   }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
@@ -198,24 +252,83 @@ export default function BookingFlow({ apiUrl, info, owner, initialType, siteUrl 
   const chosen = slot ? new Date(slot) : null;
   const chosenEnd = chosen ? new Date(chosen.getTime() + type.duration_minutes * 60000) : null;
 
+  const host = (
+    <div className="bk-host">
+      {owner.photo ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={owner.photo} alt="" className="bk-avatar" />
+      ) : (
+        <span className="bk-avatar" aria-hidden="true">
+          {initials(owner.name)}
+        </span>
+      )}
+      <div>
+        <p className="bk-host-name">{owner.name}</p>
+        <p className="bk-host-title">{owner.title}</p>
+      </div>
+    </div>
+  );
+
+  if (step === "type") {
+    return (
+      <div id="booking" className="bk-card bk-card-types">
+        <div className="bk-types-head">
+          {host}
+          <ShareProject
+            className="bk-share bk-share-inline"
+            url={siteUrl ? `${siteUrl.replace(/\/$/, "")}/book` : undefined}
+            title={`Book a call with ${owner.name}`}
+            text="Pick a meeting type and a time that suits you:"
+            label="Share"
+            noun="booking"
+          />
+        </div>
+        <div className="bk-types-intro">
+          <h2>What would you like to talk about?</h2>
+          <p className="bk-muted">
+            Choose a meeting type. Every call is a video call, and times are shown in your own time zone.
+          </p>
+        </div>
+        <ul className="bk-type-grid">
+          {info.meeting_types.map((t) => (
+            <li key={t.slug}>
+              <button type="button" className="bk-type-card" onClick={() => chooseType(t.slug)}>
+                <span className="bk-type-icon" aria-hidden="true">
+                  <TypeIcon type={t} />
+                </span>
+                <span className="bk-type-body">
+                  <strong>{t.title}</strong>
+                  {t.description && <span className="bk-type-text">{t.description}</span>}
+                </span>
+                <span className="bk-type-meta">
+                  <Clock size={14} /> {t.duration_minutes} min
+                  <ArrowRight size={16} className="bk-type-arrow" />
+                </span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
+
   return (
-    <div className={`bk-card${step === "done" ? " is-done" : ""}`}>
+    <div id="booking" className={`bk-card${step === "done" ? " is-done" : ""}`}>
       {/* ---------- Summary panel ---------- */}
       <aside className="bk-side">
-        <div className="bk-host">
-          {owner.photo ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={owner.photo} alt="" className="bk-avatar" />
-          ) : (
-            <span className="bk-avatar" aria-hidden="true">{initials(owner.name)}</span>
-          )}
-          <div>
-            <p className="bk-host-name">{owner.name}</p>
-            <p className="bk-host-title">{owner.title}</p>
-          </div>
-        </div>
+        {host}
 
-        <h2 className="bk-type-title">{type.title}</h2>
+        <div className="bk-type-heading">
+          <span className="bk-type-icon" aria-hidden="true">
+            <TypeIcon type={type} />
+          </span>
+          <h2 className="bk-type-title">{type.title}</h2>
+        </div>
+        {info.meeting_types.length > 1 && step === "pick" && (
+          <button type="button" className="bk-change" onClick={changeType}>
+            <ArrowLeft size={14} /> Change meeting type
+          </button>
+        )}
         <ul className="bk-facts">
           <li>
             <Clock size={16} /> {type.duration_minutes} minutes
@@ -250,33 +363,6 @@ export default function BookingFlow({ apiUrl, info, owner, initialType, siteUrl 
           />
         )}
 
-        {step === "pick" && info.meeting_types.length > 1 && (
-          <div className="field bk-type-select">
-            <label htmlFor="bk-type">Meeting type</label>
-            <select id="bk-type" value={type.slug} onChange={(e) => chooseType(e.target.value)}>
-              {info.meeting_types.map((t) => (
-                <option key={t.slug} value={t.slug}>
-                  {t.title} · {t.duration_minutes} min
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
-
-        {step === "pick" && info.meeting_types.length > 1 && (
-          <fieldset className="bk-types">
-            <legend>Meeting type</legend>
-            {info.meeting_types.map((t) => (
-              <label key={t.slug} className={`bk-type${t.slug === type.slug ? " is-active" : ""}`}>
-                <input type="radio" name="meeting-type" value={t.slug} checked={t.slug === type.slug} onChange={() => chooseType(t.slug)} />
-                <span>
-                  <strong>{t.title}</strong>
-                  <small>{t.duration_minutes} min</small>
-                </span>
-              </label>
-            ))}
-          </fieldset>
-        )}
       </aside>
 
       {/* ---------- Main panel ---------- */}
