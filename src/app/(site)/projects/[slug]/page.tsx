@@ -7,6 +7,7 @@ import Header from "@/components/site/Header";
 import { ArrowLeft, ArrowRight, ArrowUpRight, GitHub } from "@/components/ui/Icons";
 import ProjectVisual from "@/components/site/ProjectVisual";
 import ShareButtons from "@/components/site/ShareButtons";
+import ShareProject from "@/components/site/ShareProject";
 import ZoomableImage from "@/components/site/ZoomableImage";
 import { TechTags } from "@/components/ui/TechIcon";
 import { DEFAULT_CV_PATH, getPortfolio, getProject } from "@/lib/api";
@@ -82,22 +83,21 @@ export default async function ProjectPage({ params }: Params) {
             <p className="project-lede hero-enter" style={{ "--d": "120ms" } as React.CSSProperties}>
               {project.tagline}
             </p>
-            {(project.url || project.repo_url) && (
-              <div className="actions hero-enter" style={{ "--d": "180ms" } as React.CSSProperties}>
-                {project.url && (
-                  <a className="button button-primary" href={project.url} target="_blank" rel="noreferrer">
-                    Visit live site
-                    <ArrowUpRight size={16} />
-                  </a>
-                )}
-                {project.repo_url && (
-                  <a className="button button-secondary" href={project.repo_url} target="_blank" rel="noreferrer">
-                    <GitHub size={16} />
-                    Source code
-                  </a>
-                )}
-              </div>
-            )}
+            <div className="actions hero-enter" style={{ "--d": "180ms" } as React.CSSProperties}>
+              {project.url && (
+                <a className="button button-primary" href={project.url} target="_blank" rel="noreferrer">
+                  Visit live site
+                  <ArrowUpRight size={16} />
+                </a>
+              )}
+              {project.repo_url && (
+                <a className="button button-secondary" href={project.repo_url} target="_blank" rel="noreferrer">
+                  <GitHub size={16} />
+                  Source code
+                </a>
+              )}
+              <ShareProject url={siteUrl ? `${siteUrl}/projects/${project.slug}` : undefined} title={`${project.title} by ${profile.name}`} text={project.tagline} />
+            </div>
           </header>
 
           <div className="project-visual" data-reveal>
