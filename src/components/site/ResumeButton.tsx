@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { ArrowUpRight, Download } from "@/components/ui/Icons";
 import Modal from "@/components/ui/Modal";
+import { track } from "@/lib/analytics";
 
 type Props = {
   url: string;
@@ -27,6 +28,7 @@ export default function ResumeButton({ url, label = "Résumé", className = "but
         download
         className={className}
         onClick={(e) => {
+          track("cv_download");
           if (window.matchMedia("(max-width: 720px)").matches) return; // let phones download
           e.preventDefault();
           onOpen?.();
