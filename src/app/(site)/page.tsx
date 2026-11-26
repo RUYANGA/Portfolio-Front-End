@@ -420,9 +420,10 @@ export default async function HomePage() {
                     <span className="contact-icon">
                       <Mail size={18} />
                     </span>
-                    <span>
-                      <span className="contact-label">Email</span>
+                    <span className="contact-emails">
+                      <span className="contact-label">{profile.secondary_email ? "Email addresses" : "Email"}</span>
                       <CopyEmail email={profile.email} />
+                      {profile.secondary_email && profile.secondary_email !== profile.email && <CopyEmail email={profile.secondary_email} />}
                     </span>
                   </li>
                   {profile.phone && (

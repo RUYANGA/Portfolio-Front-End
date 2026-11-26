@@ -3517,3 +3517,10 @@ html.has-modal {
   position: relative;
   z-index: 5;
 }
+
+/* Contact: one or two email addresses, stacked */
+.contact-emails {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 0;
+}

@@ -242,6 +242,7 @@ export const PROFILE_SECTIONS: Section[] = [
       { name: "headline", label: "Headline", type: "text", required: true, help: "The large sentence at the top of the homepage." },
       { name: "location", label: "Location", type: "text", half: true },
       { name: "email", label: "Email", type: "email", required: true, half: true },
+      { name: "secondary_email", label: "Second email", type: "email", half: true, help: "Optional. Shown under the main email." },
       { name: "phone", label: "Phone", type: "text", half: true },
       { name: "years_experience", label: "Years of experience", type: "number", half: true, help: "Shown as “N+” in the stats. Leave empty to hide." },
     ],
