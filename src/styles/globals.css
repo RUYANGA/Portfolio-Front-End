@@ -3989,50 +3989,99 @@ html.has-modal {
 .book-cta {
   display: flex;
   align-items: center;
-  gap: 0.875rem;
+  gap: 1rem;
   margin-top: 2rem;
-  padding: 1rem 1.125rem;
-  border: 1px solid var(--panel-line);
+  padding: 1.125rem 1.25rem;
+  border: 1px solid rgba(166, 219, 120, 0.45);
   border-radius: var(--radius);
-  background: rgba(255, 255, 255, 0.04);
+  background: linear-gradient(135deg, rgba(166, 219, 120, 0.16), rgba(166, 219, 120, 0.05));
   color: var(--panel-ink);
-  transition: border-color 0.2s, background 0.2s;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  transition: border-color 0.2s, background 0.2s, transform 0.2s var(--ease);
 }
 
 .book-cta:hover {
-  border-color: rgba(166, 219, 120, 0.5);
-  background: rgba(166, 219, 120, 0.08);
+  border-color: rgba(166, 219, 120, 0.8);
+  background: linear-gradient(135deg, rgba(166, 219, 120, 0.22), rgba(166, 219, 120, 0.08));
   color: var(--panel-ink);
+  transform: translateY(-1px);
+}
+
+.book-cta:focus-visible {
+  outline: 2px solid #a6db78;
+  outline-offset: 3px;
 }
 
 .book-cta-icon {
   display: grid;
   place-items: center;
   flex: none;
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
   background: #a6db78;
   color: #0f1f05;
+  box-shadow: 0 6px 16px -6px rgba(166, 219, 120, 0.6);
 }
 
 .book-cta-text {
   display: grid;
-  gap: 0.15rem;
+  gap: 0.25rem;
   flex: 1;
+  min-width: 0;
+}
+
+.book-cta-text strong {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: #ffffff;
 }
 
 .book-cta-text span {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: rgba(243, 246, 241, 0.82);
+}
+
+.book-cta-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex: none;
+  padding: 0.6rem 1rem;
+  border-radius: 999px;
+  background: #a6db78;
+  color: #0f1f05;
   font-size: 0.875rem;
-  color: var(--panel-dim);
+  font-weight: 700;
+  white-space: nowrap;
+  transition: background 0.2s;
+}
+
+.book-cta:hover .book-cta-button {
+  background: #bde69a;
 }
 
 .book-cta-arrow {
-  flex: none;
-  color: #a6db78;
   transition: transform 0.2s var(--ease);
 }
 
 .book-cta:hover .book-cta-arrow {
   transform: translateX(3px);
+}
+
+@media (max-width: 520px) {
+  .book-cta {
+    flex-wrap: wrap;
+  }
+
+  .book-cta-text {
+    flex-basis: calc(100% - 64px);
+  }
+
+  .book-cta-button {
+    width: 100%;
+    justify-content: center;
+    margin-top: 0.25rem;
+  }
 }

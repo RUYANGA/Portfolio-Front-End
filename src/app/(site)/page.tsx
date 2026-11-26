@@ -505,9 +505,12 @@ export default async function HomePage() {
                   </span>
                   <span className="book-cta-text">
                     <strong>Prefer to talk?</strong>
-                    <span>Book a video call at a time that suits you. You&apos;ll get a calendar invitation straight away.</span>
+                    <span>Book a video call at a time that suits you. The calendar invitation arrives straight away.</span>
                   </span>
-                  <ArrowRight size={18} className="book-cta-arrow" />
+                  <span className="book-cta-button">
+                    Book a call
+                    <ArrowRight size={16} className="book-cta-arrow" />
+                  </span>
                 </Link>
               </div>
               <div className="contact-form-wrap">
