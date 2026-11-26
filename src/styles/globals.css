@@ -1110,7 +1110,8 @@ a:hover {
 
 .api-body {
   margin: 0;
-  min-height: 18rem;
+  /* Fits the longest response (13 lines), so the panel doesn't jump between requests. */
+  min-height: 21rem;
   padding: 1.25rem 1.25rem 1rem;
   font-family: var(--font-mono);
   font-size: 0.8125rem;
@@ -4084,4 +4085,17 @@ html.has-modal {
     justify-content: center;
     margin-top: 0.25rem;
   }
+}
+
+/* "Next: GET /api/…" under the live API panel's caption */
+.api-next {
+  display: block;
+  margin-top: 0.2rem;
+  color: var(--code-dim);
+}
+
+.api-next code {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--code-key);
 }
