@@ -13,6 +13,7 @@ export type Profile = {
   cv_file: string | null;
   available_for_work: boolean;
   socials: SocialLink[];
+  updated_at?: string | null;
   /* Editable in the admin; optional so an older API or the bundled fallback still type-checks. */
   years_experience?: number | null;
   availability_text?: string;
