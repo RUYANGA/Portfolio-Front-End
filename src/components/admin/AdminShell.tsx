@@ -12,6 +12,7 @@ import {
   Clock,
   Cloud,
   Code,
+  FileText,
   Folder,
   GraduationCap,
   InboxIcon,
@@ -53,6 +54,7 @@ const NAV: { title: string; items: NavItem[] }[] = [
     title: "Content",
     items: [
       { href: "/admin/profile", label: "Profile & site text", icon: UserIcon },
+      { href: "/admin/resume", label: "CV", icon: FileText },
       { href: "/admin/projects", label: "Projects", icon: Folder, count: "projects" },
       { href: "/admin/labs", label: "Cloud labs", icon: Cloud, count: "labs" },
       { href: "/admin/experience", label: "Experience", icon: Briefcase, count: "experiences" },
@@ -78,6 +80,7 @@ const LABELS: Record<string, string> = {
   "booking-settings": "Booking settings",
   account: "Account",
   analytics: "Analytics",
+  resume: "CV",
   new: "New",
 };
 

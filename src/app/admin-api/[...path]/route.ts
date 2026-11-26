@@ -76,7 +76,8 @@ async function handle(req: NextRequest, { params }: Ctx) {
 
   const signingOut = path.join("/") === "auth/logout";
   if (res.status === 401 || signingOut) response.cookies.delete(SESSION_COOKIE);
-  if (MUTATIONS.has(req.method) && res.ok && !signingOut) revalidatePath("/", "layout");
+  const previewOnly = path.join("/") === "resume/preview"; // renders a PDF, changes nothing
+  if (MUTATIONS.has(req.method) && res.ok && !signingOut && !previewOnly) revalidatePath("/", "layout");
   return response;
 }
 
