@@ -1,0 +1,518 @@
+/* =========================================================
+   Dashboard CV builder (/admin/resume): editor on the left, the real PDF on the right.
+   ========================================================= */
+
+.cv-statusbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1.5rem;
+  margin: -0.5rem 0 1.25rem;
+  padding: 0.7rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-size: 0.875rem;
+}
+
+.cv-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.cv-live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ink-3);
+}
+
+.cv-live.is-builder .cv-live-dot {
+  background: var(--live);
+  box-shadow: 0 0 0 3px var(--live-soft);
+}
+
+.cv-live.is-upload .cv-live-dot {
+  background: #f79009;
+}
+
+.cv-live-link,
+.cv-text-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--accent-text);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.cv-live-link:hover,
+.cv-text-btn:hover {
+  text-decoration: underline;
+}
+
+.cv-badges {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.cv-save {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.8125rem;
+  color: var(--ink-3);
+}
+
+.cv-save.is-error {
+  color: var(--danger);
+}
+
+/* ---------- Layout ---------- */
+.cv-tabs {
+  display: none;
+  margin-bottom: 1rem;
+}
+
+.cv-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 1.25rem;
+}
+
+.cv-editor {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.cv-editor .adm-section + .adm-section {
+  margin-top: 0;
+}
+
+/* ---------- Section cards ---------- */
+.cv-section-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.cv-section-title {
+  flex: 1;
+  min-width: 0;
+}
+
+.cv-section-title h2,
+.adm-root .cv-heading-input {
+  font-size: 1.0625rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+.adm-root .cv-heading-input {
+  width: 100%;
+  margin: -0.3rem 0 0 -0.45rem;
+  padding: 0.25rem 0.45rem;
+  border: 1px solid transparent;
+  background: transparent;
+  box-shadow: none;
+  color: var(--ink);
+}
+
+.adm-root .cv-heading-input::placeholder {
+  color: var(--ink);
+}
+
+.adm-root .cv-heading-input:hover {
+  border-color: var(--line);
+}
+
+.adm-root .cv-heading-input:focus {
+  border-color: var(--accent);
+  background: var(--surface);
+}
+
+.cv-section-title p {
+  margin-top: 0.2rem;
+  font-size: 0.8125rem;
+  color: var(--ink-3);
+}
+
+.cv-section-tools {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.cv-section-tools .cv-text-btn {
+  margin-right: 0.4rem;
+}
+
+.adm-root .cv-show {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-right: 0.25rem;
+  font-size: 0.8125rem;
+  color: var(--ink-2);
+  cursor: pointer;
+}
+
+.adm-root .cv-show input {
+  width: 15px;
+  height: 15px;
+  padding: 0;
+  accent-color: var(--accent);
+  box-shadow: none;
+}
+
+.cv-section.is-hidden {
+  opacity: 0.65;
+  border-style: dashed;
+}
+
+.cv-sub {
+  margin: 1rem 0 0.5rem;
+}
+
+.cv-count {
+  text-align: right;
+}
+
+.cv-count.is-over {
+  color: var(--danger);
+}
+
+.adm-root .cv-grow {
+  min-height: 2.5rem;
+  overflow: hidden;
+  resize: none;
+  line-height: 1.5;
+}
+
+/* ---------- Bullets ---------- */
+.cv-bullets {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.cv-bullet {
+  display: grid;
+  grid-template-columns: 0.9rem minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 0.4rem;
+}
+
+.cv-bullet-dot {
+  padding-top: 0.55rem;
+  text-align: center;
+  color: var(--ink-3);
+}
+
+.adm-root .cv-bullet .cv-grow {
+  min-height: 2.35rem;
+  padding: 0.45rem 0.65rem;
+  font-size: 0.9rem;
+}
+
+.cv-bullet-tools {
+  display: flex;
+  padding-top: 0.2rem;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.cv-bullet:hover .cv-bullet-tools,
+.cv-bullet:focus-within .cv-bullet-tools {
+  opacity: 1;
+}
+
+.cv-bullet-tools .adm-icon-btn {
+  width: 28px;
+  height: 28px;
+}
+
+.cv-add-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  justify-self: start;
+  margin-left: 1.3rem;
+  padding: 0.3rem 0.5rem;
+  border: 1px dashed var(--line-strong);
+  border-radius: 6px;
+  background: none;
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--ink-2);
+  cursor: pointer;
+}
+
+.cv-add-line:hover {
+  border-color: var(--accent);
+  color: var(--accent-text);
+}
+
+.cv-bullets .adm-help {
+  margin-left: 1.3rem;
+}
+
+/* ---------- Entries ---------- */
+.cv-entries {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.cv-entry {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+
+.cv-entry.is-open {
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-sm);
+}
+
+.cv-entry-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.cv-entry-toggle {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+  padding: 0.7rem 0.8rem;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.cv-entry-toggle > svg {
+  flex: none;
+  color: var(--ink-3);
+  transform: rotate(-90deg);
+  transition: transform 0.2s;
+}
+
+.cv-entry.is-open .cv-entry-toggle > svg {
+  transform: none;
+}
+
+.cv-entry-toggle span {
+  display: grid;
+  min-width: 0;
+}
+
+.cv-entry-toggle strong,
+.cv-entry-toggle small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cv-entry-toggle strong {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.cv-entry-toggle small {
+  font-size: 0.8rem;
+  color: var(--ink-3);
+}
+
+.cv-entry-tools {
+  display: flex;
+  gap: 0.15rem;
+}
+
+.cv-entry-body {
+  padding: 0.25rem 1rem 1rem;
+  border-top: 1px solid var(--line);
+}
+
+.cv-entry-body > .adm-grid,
+.cv-entry-body > .adm-field {
+  margin-top: 0.85rem;
+}
+
+.cv-add {
+  justify-self: start;
+}
+
+/* ---------- Preview ---------- */
+.cv-preview {
+  position: sticky;
+  top: calc(var(--adm-topbar, 60px) + 16px);
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  height: calc(100vh - var(--adm-topbar, 60px) - 32px);
+  min-height: 520px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+  box-shadow: var(--shadow-xs);
+}
+
+.cv-preview-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 1rem;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+  font-size: 0.875rem;
+}
+
+.cv-preview-state {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.8125rem;
+  color: var(--ink-3);
+}
+
+.cv-preview-error {
+  color: var(--danger);
+}
+
+.cv-paper {
+  position: relative;
+  min-height: 0;
+  transition: opacity 0.2s;
+}
+
+.cv-paper.is-busy {
+  opacity: 0.7;
+}
+
+.cv-paper iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #fff;
+}
+
+/* ---------- Modals ---------- */
+.cv-note {
+  margin-top: 0.75rem;
+}
+
+.cv-history {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cv-history li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.cv-history li:last-child {
+  border-bottom: 0;
+}
+
+.cv-history-num {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 10px;
+  background: var(--accent-soft);
+  color: var(--accent-text);
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.cv-history-main {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+}
+
+.cv-history-main strong {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.cv-history-main small {
+  font-size: 0.8rem;
+  color: var(--ink-3);
+}
+
+/* ---------- Smaller screens: Edit / Preview tabs ---------- */
+@media (max-width: 1100px) {
+  .cv-tabs {
+    display: inline-flex;
+  }
+
+  .cv-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .cv-layout.is-edit .cv-preview,
+  .cv-layout.is-preview .cv-editor {
+    display: none;
+  }
+
+  .cv-preview {
+    position: static;
+    height: 78vh;
+  }
+}
+
+@media (max-width: 640px) {
+  .cv-section-head {
+    flex-direction: column;
+  }
+
+  .cv-bullet-tools {
+    opacity: 1;
+  }
+
+  .cv-history li {
+    flex-wrap: wrap;
+  }
+
+  .cv-history-main {
+    flex-basis: calc(100% - 3.2rem);
+  }
+}
