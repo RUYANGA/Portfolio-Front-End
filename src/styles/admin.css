@@ -1566,7 +1566,12 @@
 
 .adm-checks {
   display: grid;
+  grid-template-columns: minmax(0, 1fr); /* rows may shrink to the screen, never widen the page */
   gap: 0.25rem;
+}
+
+.adm-checks > li {
+  min-width: 0;
 }
 
 .adm-check {
@@ -1618,12 +1623,16 @@ a.adm-check:hover {
 }
 
 .adm-check-text small {
-  display: block;
+  /* Wraps (up to four lines) so every item that needs attention can be read on a phone. */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
   overflow: hidden;
+  overflow-wrap: anywhere;
   font-size: 0.78125rem;
+  line-height: 1.45;
   color: var(--ink-3);
-  white-space: nowrap;
-  text-overflow: ellipsis;
 }
 
 .adm-check-fix {
@@ -2878,5 +2887,25 @@ button.adm-row-main {
   .adm-section-head-row {
     flex-direction: column;
     align-items: stretch;
+  }
+}
+
+/* Smallest phones (320–400px): weekly-hours rows share the width instead of overflowing. */
+@media (max-width: 400px) {
+  .adm-hours-range {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto;
+    gap: 0.35rem;
+  }
+
+  .adm-root .adm-hours-range input[type="time"] {
+    padding-inline: 0.4rem 0.3rem;
+    font-size: 0.8125rem;
+    letter-spacing: -0.01em;
+  }
+
+  .adm-root .adm-hours-range input[type="time"]::-webkit-calendar-picker-indicator {
+    margin: 0;
+    padding: 0;
   }
 }

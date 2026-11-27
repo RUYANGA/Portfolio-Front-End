@@ -318,6 +318,7 @@
 /* ---------- Bar lists ---------- */
 .an-bars {
   display: grid;
+  grid-template-columns: minmax(0, 1fr); /* long names truncate instead of widening the page */
   gap: 0.35rem;
   list-style: none;
   padding: 0;
@@ -1270,5 +1271,23 @@ button.an-split-row:hover {
 
   .an-split-row {
     min-height: 40px;
+  }
+}
+
+/* Phones: the range tabs scroll sideways inside their own box instead of widening the page. */
+@media (max-width: 640px) {
+  .an-page .adm-page-actions {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .an-page .adm-segmented {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+
+  /* Ranked lists: keep the name readable; visitors and share stay, the "N views" note goes. */
+  .an-bar-value small {
+    display: none;
   }
 }
