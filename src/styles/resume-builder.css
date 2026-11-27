@@ -156,6 +156,7 @@
 .cv-section-tools {
   display: flex;
   flex: none;
+  flex-wrap: wrap;
   align-items: center;
   gap: 0.35rem;
 }

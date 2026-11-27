@@ -152,7 +152,14 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
-  overflow-x: hidden;
+  overflow-x: hidden; /* older browsers */
+  overflow-x: clip;
+}
+
+/* Safety net: nothing can make a page wider than the screen. On phones the width has to be
+   limited on the root, and "clip" (unlike "hidden") keeps sticky headers working. */
+html {
+  overflow-x: clip;
 }
 
 h1,
