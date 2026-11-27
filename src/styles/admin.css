@@ -1108,7 +1108,7 @@
 }
 
 .adm-thumb span {
-  font-size: 0.625rem;
+  font-size: 0.6875rem;
   color: var(--ink-3);
 }
 
@@ -2809,5 +2809,74 @@ button.adm-row-main {
 
   .adm-bk-actions {
     grid-column: 1 / -1;
+  }
+}
+
+/* ---------- Touch and small screens ---------- */
+.adm-hours-range .adm-icon-btn {
+  flex: none; /* never squeezed by the time inputs */
+}
+
+.adm-bk-company {
+  font-size: 0.875rem;
+  color: var(--ink-2);
+}
+
+@media (max-width: 760px), (pointer: coarse) {
+  /* Icon and text buttons: at least 40px to tap comfortably. */
+  .adm-icon-btn,
+  .adm-user .adm-icon-btn {
+    width: 40px;
+    height: 40px;
+  }
+
+  .adm-order {
+    gap: 2px;
+  }
+
+  .adm-order .adm-icon-btn {
+    width: 36px;
+    height: 32px;
+    color: var(--ink-2);
+  }
+
+  .adm-back,
+  .adm-link,
+  .adm-login-back {
+    min-height: 40px;
+  }
+
+  /* Messages: no empty "select a message" panel under the list on phones. */
+  .adm-inbox {
+    min-height: 0;
+  }
+
+  .adm-inbox-placeholder {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  /* Bookings: time on top, then the guest, then the buttons. */
+  .adm-bk {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.75rem;
+    padding: 1rem;
+  }
+
+  .adm-bk-time {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+  }
+
+  .adm-bk-time span::before {
+    content: "– ";
+  }
+
+  /* Card headers with an action (e.g. Connected calendars · Check now): action below the text. */
+  .adm-section-head-row {
+    flex-direction: column;
+    align-items: stretch;
   }
 }

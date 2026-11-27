@@ -516,3 +516,10 @@
     flex-basis: calc(100% - 3.2rem);
   }
 }
+
+@media (max-width: 760px), (pointer: coarse) {
+  .cv-text-btn,
+  .cv-live-link {
+    min-height: 40px;
+  }
+}

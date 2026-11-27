@@ -151,9 +151,9 @@ export default function BookingsManager() {
                 <div className="adm-bk-body">
                   <p className="adm-bk-title">
                     <strong>{b.name}</strong>
-                    {b.company && <span> · {b.company}</span>}
                     <span className="adm-badge">{b.title}</span>
                   </p>
+                  {b.company && <p className="adm-bk-company">{b.company}</p>}
                   <p className="adm-bk-meta">
                     <a href={`mailto:${b.email}`}>{b.email}</a>
                     {b.visitor_timezone && <span> · their time {time(b.start, b.visitor_timezone)} ({b.visitor_timezone.replace(/_/g, " ")})</span>}

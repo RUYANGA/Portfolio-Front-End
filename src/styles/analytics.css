@@ -752,12 +752,12 @@ button.an-split-row:hover {
   position: relative;
   display: inline-grid;
   place-items: center;
-  width: 15px;
-  height: 15px;
+  width: 16px;
+  height: 16px;
   margin-left: auto;
   border-radius: 50%;
   border: 1px solid var(--line-strong);
-  font-size: 0.625rem;
+  font-size: 0.6875rem;
   font-weight: 700;
   font-style: italic;
   font-family: Georgia, serif;
@@ -1257,5 +1257,18 @@ button.an-split-row:hover {
 
   .an-reach-list li {
     grid-template-columns: 5.5rem minmax(0, 1fr) 2.6rem;
+  }
+}
+
+/* ---------- Touch: finger-sized rows and links ---------- */
+@media (max-width: 760px), (pointer: coarse) {
+  .an-page-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+  }
+
+  .an-split-row {
+    min-height: 40px;
   }
 }
