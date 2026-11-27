@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { FormEvent, useEffect, useMemo, useState } from "react";
-import { AlertCircle, ArrowUpRight, Check, Plus, Trash } from "@/components/ui/Icons";
+import { AlertCircle, ArrowUpRight, Check, Clock, Plus, Trash } from "@/components/ui/Icons";
 import { adminFetch, ApiError } from "@/lib/admin/client";
 import type { Field } from "@/lib/admin/resources";
 import { FieldControl } from "./Fields";
@@ -23,6 +23,8 @@ type Settings = {
   daily_limit: number;
   calendar_emails: string[];
   meeting_link: string;
+  reminder_minutes: number[];
+  remind_guest: boolean;
   calendars?: Calendars;
 };
 
@@ -36,6 +38,18 @@ const DAYS: [string, string][] = [
   ["sun", "Sunday"],
 ];
 
+/** Reminder times offered, in minutes before the meeting. */
+const REMINDER_OPTIONS: [number, string][] = [
+  [2880, "2 days"],
+  [1440, "1 day"],
+  [180, "3 hours"],
+  [60, "1 hour"],
+  [30, "30 minutes"],
+  [15, "15 minutes"],
+  [10, "10 minutes"],
+];
+const MAX_REMINDERS = 5;
+
 const STEP_OPTIONS = [10, 15, 20, 30, 60].map((m) => ({ value: String(m), label: `Every ${m} minutes` }));
 
 const FIELDS: Record<string, Field> = {
@@ -47,6 +61,7 @@ const FIELDS: Record<string, Field> = {
     placeholder: "Add an address and press Enter",
     help: "Every booking is added to each of these calendars, e.g. your Gmail and your Outlook work address.",
   },
+  remind_guest: { name: "remind_guest", label: "Remind the guest too", type: "checkbox", help: "They get the same reminder emails, in their own time zone." },
   meeting_link: { name: "meeting_link", label: "Video call link", type: "url", placeholder: "https://meet.google.com/…", help: "Added to every invitation. Leave empty to send a link yourself." },
   min_notice_hours: { name: "min_notice_hours", label: "Minimum notice (hours)", type: "number", help: "How soon a meeting can start." },
   max_days_ahead: { name: "max_days_ahead", label: "Book up to (days ahead)", type: "number" },
@@ -254,6 +269,68 @@ export default function BookingSettingsEditor() {
               );
             })}
           </ul>
+        </section>
+
+        {/* Reminders */}
+        <section className="adm-card adm-section">
+          <div className="adm-section-head">
+            <h2>Reminders</h2>
+            <p>Before every meeting you get a reminder email at both invitation addresses, so it pops up on your phone.</p>
+          </div>
+          <p className="adm-label" id="reminder-times">
+            Remind me before each meeting
+          </p>
+          <div className="adm-reminders" role="group" aria-labelledby="reminder-times">
+            {REMINDER_OPTIONS.map(([minutes, label]) => {
+              const on = (values.reminder_minutes ?? []).includes(minutes);
+              const full = !on && (values.reminder_minutes ?? []).length >= MAX_REMINDERS;
+              return (
+                <button
+                  key={minutes}
+                  type="button"
+                  className={`adm-reminder${on ? " is-on" : ""}`}
+                  aria-pressed={on}
+                  disabled={full}
+                  title={full ? `Up to ${MAX_REMINDERS} reminders` : undefined}
+                  onClick={() =>
+                    set(
+                      "reminder_minutes",
+                      on ? values.reminder_minutes.filter((m) => m !== minutes) : [...(values.reminder_minutes ?? []), minutes].sort((a, b) => b - a),
+                    )
+                  }
+                >
+                  {on ? <Check size={14} /> : <Clock size={14} />} {label}
+                </button>
+              );
+            })}
+          </div>
+          <p className={`adm-help${errors.reminder_minutes ? " adm-error" : ""}`}>
+            {errors.reminder_minutes ||
+              ((values.reminder_minutes ?? []).length
+                ? "Reminders are also added to the calendar invitation."
+                : "No reminders: choose at least one time to be reminded.")}
+          </p>
+          <div className="adm-reminder-guest">{field("remind_guest", values.remind_guest, (v) => set("remind_guest", Boolean(v)))}</div>
+          <div className="adm-reminder-tip">
+            <p>
+              <strong>Want a pop-up from the calendar as well?</strong> Google Calendar and Outlook use their own notification settings for
+              invitations, so switch them on once:
+            </p>
+            <ul>
+              <li>
+                <a href="https://calendar.google.com/calendar/r/settings" target="_blank" rel="noreferrer">
+                  Google Calendar <ArrowUpRight size={12} />
+                </a>{" "}
+                → your calendar under “Settings for my calendars” → <em>Event notifications</em> → add e.g. 1 day and 30 minutes.
+              </li>
+              <li>
+                <a href="https://outlook.office.com/mail/options/calendar/eventsAndInvitations" target="_blank" rel="noreferrer">
+                  Outlook <ArrowUpRight size={12} />
+                </a>{" "}
+                → Calendar → Events and invitations → <em>Default reminder</em> → e.g. 30 minutes.
+              </li>
+            </ul>
+          </div>
         </section>
 
         {/* Rules */}
