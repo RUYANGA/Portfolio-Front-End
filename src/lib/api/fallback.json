@@ -154,6 +154,21 @@
       ]
     },
     {
+      "role": "Django Full-Stack Intern",
+      "company": "VONSUNG",
+      "location": "Kigali, Rwanda (Hybrid)",
+      "period": "Apr 2026 – Jun 2026",
+      "is_current": false,
+      "summary": "Full-stack web development with Django and Django REST Framework in a hybrid team.",
+      "highlights": [
+        "Built full-stack web features with Django, from data models and views to server-rendered templates.",
+        "Developed REST APIs with Django REST Framework and connected them to the frontend.",
+        "Designed PostgreSQL data models and implemented authentication and role-based access.",
+        "Worked in a hybrid team, taking part in code reviews, testing and Git-based delivery."
+      ],
+      "technologies": ["Python", "Django", "Django REST Framework", "PostgreSQL", "JavaScript"]
+    },
+    {
       "role": "Full-Stack Intern",
       "company": "SEVEN X",
       "location": "Kigali, Rwanda",
