@@ -4,7 +4,7 @@
     "title": "Backend Engineer",
     "headline": "I build backend systems that institutions run on every day.",
     "summary": "Backend-focused full-stack engineer with 4+ years of experience designing, building, and deploying production web applications. I specialize in scalable backend architecture, microservices, event-driven systems with Apache Kafka, and REST and GraphQL APIs, using Python (Django, FastAPI), Node.js, NestJS, PostgreSQL, and Redis. I work across the full lifecycle, from system design and secure authentication to cloud deployment on AWS.",
-    "about": "I am a final-year Computer Science student at the University of Rwanda, and most of what I know I learned by shipping. Several systems I built are used daily by university staff, students, and innovators across multiple campuses. I like problems where the hard part is understanding how people actually work, then turning that into software that is reliable, secure, and easy to maintain.",
+    "about": "Most of what I know I learned by shipping. Several systems I built are used daily by university staff, students, and innovators across multiple campuses. I like problems where the hard part is understanding how people actually work, then turning that into software that is reliable, secure, and easy to maintain.",
     "location": "Kigali, Rwanda",
     "email": "ruyangam15@gmail.com",
     "secondary_email": "admin@ruyanga.com",
@@ -438,9 +438,9 @@
   ],
   "education": [
     {
-      "degree": "BSc in Computer Science",
+      "degree": "Bachelor of Science in Computer Science",
       "institution": "University of Rwanda, College of Science and Technology (Nyarugenge)",
-      "period": "Final year",
+      "period": "",
       "coursework": "Data Structures and Algorithms, Database Systems, Software Engineering, Web Development"
     }
   ],
