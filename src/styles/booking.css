@@ -343,8 +343,25 @@
     height: 56px;
   }
 
-  .bk-types-head .bk-host-title {
-    display: none;
+  /* Share becomes a round icon button, so the name and title keep their room. */
+  .bk-types-head .bk-host {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .bk-types-head .bk-share-inline {
+    flex: none;
+    width: auto;
+  }
+
+  .bk-share-inline .share-project-btn {
+    width: 44px;
+    height: 44px;
+    min-height: 44px;
+    padding: 0;
+    gap: 0;
+    border-radius: 50%;
+    font-size: 0;
   }
 
   .bk-types-intro {
@@ -857,5 +874,37 @@
   .bk-skeleton,
   .bk-slot-next {
     animation: none;
+  }
+}
+
+/* ---------- Touch and small screens ---------- */
+.bk-email {
+  display: block;
+  overflow-wrap: anywhere;
+  color: var(--ink-2);
+}
+
+@media (max-width: 760px), (pointer: coarse) {
+  /* Text links used as buttons get a finger-sized hit area. */
+  .bk-crumb,
+  .bk-change {
+    min-height: 44px;
+  }
+
+  .bk-change {
+    margin-top: -0.6rem;
+  }
+}
+
+/* Smallest phones (320–380px): a smaller avatar and padding keep the name on one line. */
+@media (max-width: 380px) {
+  .bk-card-types {
+    padding: 1.1rem;
+  }
+
+  .bk-types-head .bk-avatar {
+    width: 48px;
+    height: 48px;
+    font-size: 1rem;
   }
 }

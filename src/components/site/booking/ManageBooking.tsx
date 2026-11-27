@@ -79,7 +79,8 @@ export default function ManageBooking({ apiUrl, token, owner }: { apiUrl: string
         <div>
           <dt>Booked by</dt>
           <dd>
-            {booking.name} · {booking.email}
+            {booking.name}
+            <span className="bk-email">{booking.email}</span>
           </dd>
         </div>
         {!cancelled && booking.meeting_link && (
