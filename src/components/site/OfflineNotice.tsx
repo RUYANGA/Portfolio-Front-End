@@ -31,7 +31,6 @@ export default function OfflineNotice() {
         <div className="offline-icon" aria-hidden="true">
           <WifiOff size={28} />
         </div>
-        <p className="eyebrow">Connection lost</p>
         <h2 className="offline-title">No internet connection</h2>
         <p className="offline-copy">
           You&apos;re currently offline. Check your network connection and try again.
