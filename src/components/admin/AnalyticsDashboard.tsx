@@ -1,9 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AlertCircle, ArrowUpRight, Award, Clock, Download, Eye, Globe, Mail, UserIcon, XIcon, Zap } from "@/components/ui/Icons";
 import { adminFetch, ApiError } from "@/lib/admin/client";
 import Journeys from "./analytics/Journeys";
+import LivePanel, { LiveStatusBadge } from "./analytics/LivePanel";
+import { useLiveAnalytics } from "./analytics/useLiveAnalytics";
 import { BarList, Card, Funnel, Heatmap, Kpi, Split, Tabs, TrafficChart } from "./analytics/parts";
 import {
   change,
@@ -46,7 +48,10 @@ const PAGE_TABS: [PageTab, string][] = [
   ["exit", "Exit"],
 ];
 
-const REFRESH_MS = 60_000;
+/** Totals refresh this long after live activity (several visits at once cause one refresh). */
+const ACTIVITY_REFRESH_MS = 2500;
+/** Backup refresh when the live connection is down. */
+const FALLBACK_REFRESH_MS = 60_000;
 
 function readFilters(): Filters {
   const params = new URLSearchParams(window.location.search);
@@ -116,9 +121,26 @@ export default function AnalyticsDashboard() {
     const search = shown.toString();
     window.history.replaceState(null, "", `${window.location.pathname}${search ? `?${search}` : ""}`);
     load();
-    const timer = window.setInterval(() => document.visibilityState === "visible" && load(true), REFRESH_MS);
-    return () => window.clearInterval(timer);
   }, [load, query, ready]);
+
+  // Live: new visits and actions refresh the totals within seconds (debounced).
+  const loadRef = useRef(load);
+  loadRef.current = load;
+  const refreshTimer = useRef<number | undefined>(undefined);
+  const live = useLiveAnalytics(
+    useCallback(() => {
+      window.clearTimeout(refreshTimer.current);
+      refreshTimer.current = window.setTimeout(() => loadRef.current(true), ACTIVITY_REFRESH_MS);
+    }, []),
+  );
+  useEffect(() => () => window.clearTimeout(refreshTimer.current), []);
+
+  // Backup while the live connection is down: refresh every minute.
+  useEffect(() => {
+    if (!ready || live.status === "live") return;
+    const timer = window.setInterval(() => document.visibilityState === "visible" && loadRef.current(true), FALLBACK_REFRESH_MS);
+    return () => window.clearInterval(timer);
+  }, [ready, live.status]);
 
   const addFilter = (key: FilterKey) => (value: string) => setFilters((f) => ({ ...f, [key]: value }));
   const removeFilter = (key: FilterKey) =>
@@ -186,12 +208,7 @@ export default function AnalyticsDashboard() {
           <p>Who visits your portfolio, how they find it, how far they read and what they do. No cookies; your own visits while signed in aren&apos;t counted.</p>
         </div>
         <div className="adm-page-actions">
-          {report && (
-            <span className={`an-live${report.live.visitors ? " is-on" : ""}`} title="Visitors active in the last 5 minutes">
-              <span className="an-live-dot" aria-hidden="true" />
-              {report.live.visitors} {report.live.visitors === 1 ? "visitor" : "visitors"} now
-            </span>
-          )}
+          {report && <LiveStatusBadge status={live.status} visitors={(live.presence ?? report.live).visitors} />}
           <Tabs value={String(days)} options={RANGES.map(([d, l]) => [String(d), l])} onChange={(v) => setDays(Number(v))} label="Date range" />
           <button type="button" className="button button-secondary button-sm" onClick={exportCsv} disabled={!report}>
             <Download size={15} /> Export CSV
@@ -252,6 +269,8 @@ export default function AnalyticsDashboard() {
             <Kpi label="Returning" value={pct(t.returning_rate)} delta={change(t.returning_rate, p.returning_rate)} icon={UserIcon} hint="Visits from people who had been here before." />
             <Kpi label="Goal visits" value={num(t.actions)} delta={change(t.actions, p.actions)} icon={Award} hint="Visits that opened the résumé, booked a meeting or sent a message." />
           </section>
+
+          <LivePanel status={live.status} presence={live.presence ?? report.live} feed={live.feed} />
 
           <Card
             title="Traffic"
@@ -473,34 +492,16 @@ export default function AnalyticsDashboard() {
             <Heatmap grid={report.heatmap} />
           </Card>
 
-          <div className="an-grid an-grid-wide">
-            <Card title="Visit journeys" subtitle="The latest visits, step by step. Click one to open its timeline.">
-              <Journeys sessions={report.sessions} />
-            </Card>
-            <Card title="Right now" subtitle="Pages open in the last 5 minutes">
-              {report.live.pages.length ? (
-                <ul className="an-recent">
-                  {[...report.live.pages].reverse().map((page, i) => (
-                    <li key={i}>
-                      <span className="an-flag" aria-label={countryName(page.country)}>
-                        {flag(page.country)}
-                      </span>
-                      <div className="an-recent-main">
-                        <strong>{pageName(page.path)}</strong>
-                        <span>{[page.city || countryName(page.country), page.device].filter(Boolean).join(" · ")}</span>
-                      </div>
-                      <span className="an-live-dot" aria-hidden="true" />
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="an-empty-cell">Nobody is on the site right now.</p>
-              )}
-            </Card>
-          </div>
+          <Card title="Visit journeys" subtitle="The latest visits, step by step. Click one to open its timeline.">
+            <Journeys sessions={report.sessions} />
+          </Card>
 
           <p className="an-foot">
-            {updated && <>Updated {updated.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })} · refreshes every minute · </>}
+            {live.status === "live" ? (
+              <>Live: totals update within seconds of each visit · </>
+            ) : (
+              updated && <>Updated {updated.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })} · refreshes every minute until the live connection is back · </>
+            )}
             Compared with the previous {days === 1 ? "day" : `${days} days`}.
           </p>
         </div>

@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
-import { track, trackTime, trackView } from "@/lib/analytics";
+import { track, trackPing, trackTime, trackView } from "@/lib/analytics";
 
 /** The site's own API (résumé PDF, images): links there aren't visitors leaving the site. */
 const API_HOST = (() => {
@@ -12,6 +12,9 @@ const API_HOST = (() => {
     return "";
   }
 })();
+
+/** How often an open page checks in, so the dashboard's live view and time on page stay exact. */
+const HEARTBEAT_MS = 15_000;
 
 /** Home-page sections whose reach is measured (their element ids). */
 const SECTIONS = ["about", "experience", "projects", "labs", "skills", "contact"];
@@ -47,9 +50,17 @@ export default function Analytics() {
       pause();
       if (id !== null && (active >= 1000 || deepest > 0)) trackTime(id, Math.round(active / 1000), deepest);
     };
+    const visibleSeconds = () => Math.round((active + (since !== null ? Date.now() - since : 0)) / 1000);
+    const heartbeat = () => {
+      if (id !== null && document.visibilityState === "visible") trackPing(id, visibleSeconds(), deepest);
+    };
+    const beat = window.setInterval(heartbeat, HEARTBEAT_MS);
     const onVisibility = () => {
       if (document.visibilityState === "hidden") report(); // the last reliable moment on phones
-      else since = Date.now();
+      else {
+        since = Date.now();
+        heartbeat(); // back on the tab: live again straight away
+      }
     };
     let frame = 0;
     const onScroll = () => {
@@ -90,6 +101,7 @@ export default function Analytics() {
       window.removeEventListener("pagehide", report);
       window.removeEventListener("scroll", onScroll);
       cancelAnimationFrame(frame);
+      window.clearInterval(beat);
       observer?.disconnect();
       report(); // moving to another page
     };

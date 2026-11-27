@@ -1,0 +1,182 @@
+/* =========================================================
+   Live analytics: status badge, "Right now" and the live activity feed.
+   ========================================================= */
+
+.an-live.is-connecting {
+  color: var(--ink-3);
+}
+
+.an-live.is-connecting .an-live-dot {
+  background: var(--ink-3);
+  animation: an-blink 1s ease-in-out infinite;
+}
+
+.an-live.is-offline {
+  color: var(--danger);
+  border-color: color-mix(in srgb, var(--danger) 30%, transparent);
+  background: color-mix(in srgb, var(--danger) 7%, var(--surface));
+}
+
+.an-live.is-offline .an-live-dot {
+  background: var(--danger);
+}
+
+.an-live.is-live .an-live-dot {
+  background: var(--live);
+  animation: an-pulse 2s infinite;
+}
+
+@keyframes an-blink {
+  50% {
+    opacity: 0.3;
+  }
+}
+
+/* ---------- Panel ---------- */
+.an-livepanel {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+}
+
+.an-livepanel .an-card {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  min-height: 18rem;
+}
+
+.an-count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.6rem;
+  height: 1.6rem;
+  margin-left: 0.35rem;
+  padding: 0 0.45rem;
+  border-radius: 999px;
+  background: var(--live-soft);
+  color: var(--live-text);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  vertical-align: 0.1em;
+}
+
+/* Right now */
+.an-now,
+.an-feed {
+  display: grid;
+  align-content: start;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  max-height: 22rem;
+  overflow-y: auto;
+}
+
+.an-now li,
+.an-feed li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.an-now li:last-child,
+.an-feed li:last-child {
+  border-bottom: 0;
+}
+
+.an-now-main,
+.an-feed-main {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+}
+
+.an-now-main strong,
+.an-feed-main strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.an-now-main span,
+.an-feed-main span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.8125rem;
+  color: var(--ink-3);
+}
+
+.an-now-time,
+.an-feed time {
+  flex: none;
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+
+.an-live-dot.is-pulse {
+  background: var(--live);
+  animation: an-pulse 2s infinite;
+}
+
+/* Live activity: newest first, each new line highlights briefly. */
+.an-feed li {
+  animation: an-arrive 1.6s ease-out;
+}
+
+@keyframes an-arrive {
+  from {
+    background: color-mix(in srgb, var(--live) 14%, transparent);
+  }
+}
+
+.an-feed-dot {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--ink-3);
+}
+
+.an-feed .is-view .an-feed-dot {
+  background: var(--an-views, var(--accent));
+}
+
+.an-feed .is-out .an-feed-dot {
+  background: var(--an-visitors, #2e90fa);
+}
+
+.an-feed .is-goal .an-feed-dot {
+  background: var(--live);
+  box-shadow: 0 0 0 3px var(--live-soft);
+}
+
+.an-feed .is-goal strong {
+  color: var(--live-text);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .an-feed li,
+  .an-live-dot,
+  .an-live-dot.is-pulse {
+    animation: none;
+  }
+}
+
+@media (max-width: 1024px) {
+  .an-livepanel {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .an-livepanel .an-card {
+    min-height: 0;
+  }
+}
