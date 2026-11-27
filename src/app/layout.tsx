@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import Analytics from "@/components/site/Analytics";
 import OfflineNotice from "@/components/site/OfflineNotice";
 import RevealObserver from "@/components/site/RevealObserver";
+import ServiceWorker from "@/components/site/ServiceWorker";
 import { getPortfolio } from "@/lib/api";
 import "@/styles/globals.css";
 
@@ -124,6 +125,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         {children}
         <OfflineNotice />
         <RevealObserver />
+        <ServiceWorker />
         <Analytics />
       </body>
     </html>
