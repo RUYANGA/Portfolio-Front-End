@@ -87,6 +87,11 @@ export function trackTime(id: number, seconds: number, scroll: number) {
   fetch(ENDPOINT, { method: "POST", headers: { "Content-Type": "application/json" }, body, keepalive: true }).catch(() => undefined);
 }
 
+/** Heartbeat while the page is on screen: keeps the visitor "live" and saves time on page as it grows. */
+export function trackPing(id: number, seconds: number, scroll: number) {
+  post({ type: "ping", id, seconds, scroll }).catch(() => undefined);
+}
+
 /** Record an action: résumé opened, meeting booked, message sent, section reached, link clicked… */
 export function track(name: EventName, target = "") {
   post({ type: "event", name, target, path: window.location.pathname }, true).catch(() => undefined);

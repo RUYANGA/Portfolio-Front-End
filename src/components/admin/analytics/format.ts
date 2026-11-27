@@ -70,7 +70,37 @@ export type Report = {
   outbound: { target: string; clicks: number; visitors: number }[];
   heatmap: number[][];
   sessions: Journey[];
-  live: { visitors: number; pages: { path: string; country: string; city: string; device: string }[] };
+  live: Presence;
+};
+
+/** Someone on the site right now (heartbeat in the last 45 s). */
+export type LivePage = {
+  path: string;
+  country: string;
+  city: string;
+  device: string;
+  browser?: string;
+  source?: string;
+  since?: string;
+  seen?: string;
+  seconds?: number;
+};
+export type Presence = { visitors: number; pages: LivePage[]; at?: string };
+
+/** One thing that just happened on the site, pushed over the live connection. */
+export type LiveEvent = {
+  type: "view" | "event" | "leave";
+  id: number;
+  at: string;
+  path: string;
+  name: string;
+  target: string;
+  country: string;
+  city: string;
+  device: string;
+  browser: string;
+  source: string;
+  returning: boolean;
 };
 
 export const FILTER_LABELS = {
