@@ -135,11 +135,20 @@ export default function AnalyticsDashboard() {
   );
   useEffect(() => () => window.clearTimeout(refreshTimer.current), []);
 
-  // Backup while the live connection is down: refresh every minute.
+  // Keep totals fresh. Live connection gets debounced activity refreshes above;
+  // this periodic refresh keeps aggregates current even for quiet periods.
   useEffect(() => {
-    if (!ready || live.status === "live") return;
-    const timer = window.setInterval(() => document.visibilityState === "visible" && loadRef.current(true), FALLBACK_REFRESH_MS);
-    return () => window.clearInterval(timer);
+    if (!ready) return;
+    const interval = live.status === "live" ? 15_000 : FALLBACK_REFRESH_MS;
+    const timer = window.setInterval(() => document.visibilityState === "visible" && loadRef.current(true), interval);
+    const onVisible = () => document.visibilityState === "visible" && loadRef.current(true);
+    window.addEventListener("focus", onVisible);
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      window.clearInterval(timer);
+      window.removeEventListener("focus", onVisible);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
   }, [ready, live.status]);
 
   const addFilter = (key: FilterKey) => (value: string) => setFilters((f) => ({ ...f, [key]: value }));
@@ -498,7 +507,7 @@ export default function AnalyticsDashboard() {
 
           <p className="an-foot">
             {live.status === "live" ? (
-              <>Live: totals update within seconds of each visit · </>
+              <>Live: totals refresh automatically every 15 seconds and on activity · </>
             ) : (
               updated && <>Updated {updated.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })} · refreshes every minute until the live connection is back · </>
             )}
