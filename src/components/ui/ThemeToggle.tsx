@@ -3,13 +3,13 @@
 import { useEffect, useRef, useState } from "react";
 import { Check, Monitor, Moon, Sun } from "./Icons";
 
-/** "system" follows the device setting (the default); light/dark are explicit choices. */
+/** Dark is default on first visit; user can switch to light/dark/system. */
 type Choice = "system" | "light" | "dark";
 
 const OPTIONS: { value: Choice; label: string; icon: typeof Sun }[] = [
-  { value: "system", label: "System", icon: Monitor },
-  { value: "light", label: "Light", icon: Sun },
   { value: "dark", label: "Dark", icon: Moon },
+  { value: "light", label: "Light", icon: Sun },
+  { value: "system", label: "System", icon: Monitor },
 ];
 
 const prefersDark = () => window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -17,20 +17,22 @@ const prefersDark = () => window.matchMedia("(prefers-color-scheme: dark)").matc
 function savedChoice(): Choice {
   try {
     const t = localStorage.getItem("theme");
-    if (t === "light" || t === "dark") return t;
+    if (t === "light" || t === "dark" || t === "system") return t;
   } catch {
     /* storage unavailable */
   }
-  return "system";
+  return "dark";
 }
 
 function apply(choice: Choice) {
   const root = document.documentElement;
-  if (choice === "system") delete root.dataset.theme;
-  else root.dataset.theme = choice;
+  if (choice === "system") {
+    root.dataset.theme = prefersDark() ? "dark" : "light";
+  } else {
+    root.dataset.theme = choice;
+  }
   try {
-    if (choice === "system") localStorage.removeItem("theme");
-    else localStorage.setItem("theme", choice);
+    localStorage.setItem("theme", choice);
   } catch {
     /* the choice still applies for this visit */
   }
@@ -76,7 +78,7 @@ export default function ThemeToggle() {
   }
 
   const Icon = choice === "system" ? Monitor : dark ? Moon : Sun;
-  const current = OPTIONS.find((o) => o.value === choice)?.label ?? "System";
+  const current = OPTIONS.find((o) => o.value === choice)?.label ?? "Dark";
 
   return (
     <div className="theme-menu" ref={wrap}>
