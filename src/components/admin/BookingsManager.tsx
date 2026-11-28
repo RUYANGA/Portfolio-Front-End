@@ -54,6 +54,7 @@ export default function BookingsManager() {
   const [timeZone, setTimeZone] = useState("Africa/Kigali");
   const [failing, setFailing] = useState<Feed[]>([]);
   const [cancelling, setCancelling] = useState<Booking | null>(null);
+  const [deleting, setDeleting] = useState<Booking | null>(null);
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
@@ -91,6 +92,21 @@ export default function BookingsManager() {
       setBookings((list) => list?.filter((b) => b.id !== cancelling.id) ?? null);
       toast(`Cancelled. ${cancelling.name} and your calendars have been updated.`);
       setCancelling(null);
+    } catch (e) {
+      toast((e as ApiError).message, "error");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function remove() {
+    if (!deleting) return;
+    setBusy(true);
+    try {
+      await adminFetch(`booking/bookings/${deleting.id}/`, { method: "DELETE" });
+      setBookings((list) => list?.filter((b) => b.id !== deleting.id) ?? null);
+      toast("Booking deleted.");
+      setDeleting(null);
     } catch (e) {
       toast((e as ApiError).message, "error");
     } finally {
@@ -181,6 +197,11 @@ export default function BookingsManager() {
                       <XIcon size={15} /> Cancel
                     </button>
                   )}
+                  {period !== "upcoming" && (
+                    <button type="button" className="button button-secondary button-sm adm-text-danger" onClick={() => setDeleting(b)}>
+                      Delete
+                    </button>
+                  )}
                 </div>
               </li>
             ))}
@@ -210,6 +231,25 @@ export default function BookingsManager() {
           </label>
           <textarea id="bk-cancel-reason" name="reason" rows={3} maxLength={300} placeholder="Sorry, something came up. Could we find another time?" />
         </form>
+      </Modal>
+
+      <Modal
+        open={deleting !== null}
+        onClose={() => setDeleting(null)}
+        title={deleting ? `Delete this booking with ${deleting.name}?` : ""}
+        description="This removes the booking record from the dashboard. It does not send an email."
+        footer={
+          <>
+            <button type="button" className="button button-secondary button-sm" onClick={() => setDeleting(null)}>
+              Keep it
+            </button>
+            <button type="button" className="button adm-button-danger button-sm" disabled={busy} onClick={remove}>
+              {busy ? "Deleting…" : "Delete booking"}
+            </button>
+          </>
+        }
+      >
+        <p className="adm-help">Use this for cancelled or expired meetings you no longer need to keep.</p>
       </Modal>
     </>
   );
