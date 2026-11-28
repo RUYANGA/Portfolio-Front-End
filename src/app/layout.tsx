@@ -36,6 +36,10 @@ export async function generateMetadata(): Promise<Metadata> {
     keywords,
     category: "technology",
     alternates: { canonical: "/" },
+    icons: {
+      icon: [{ url: "/favicon.ico", sizes: "48x48" }, { url: "/icon.png", type: "image/png", sizes: "512x512" }],
+      apple: [{ url: "/apple-icon", sizes: "180x180", type: "image/png" }],
+    },
     formatDetection: { telephone: false, email: false, address: false },
     robots: {
       index: true,
