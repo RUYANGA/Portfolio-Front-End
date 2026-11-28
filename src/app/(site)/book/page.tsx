@@ -10,7 +10,7 @@ import "@/styles/booking.css";
 
 const PUBLIC_API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 type Params = { searchParams: { type?: string } };
 
