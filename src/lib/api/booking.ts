@@ -21,6 +21,7 @@ export type BookingResult = {
   meeting_link: string;
   can_cancel: boolean;
   manage_token: string;
+  google_calendar_connected?: boolean;
 };
 
 const SERVER_API = (process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000").replace(/\/$/, "");
