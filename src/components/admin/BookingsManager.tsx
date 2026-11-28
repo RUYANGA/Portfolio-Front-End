@@ -20,6 +20,8 @@ type Booking = {
   status: "confirmed" | "cancelled";
   cancelled_at: string | null;
   cancel_reason: string;
+  meeting_link: string;
+  meeting_provider: string;
   created_at: string;
 };
 type Period = "upcoming" | "past" | "cancelled";
@@ -166,6 +168,11 @@ export default function BookingsManager() {
                   )}
                 </div>
                 <div className="adm-bk-actions">
+                  {b.meeting_link && b.status === "confirmed" && (
+                    <a className="button button-primary button-sm" href={b.meeting_link} target="_blank" rel="noreferrer">
+                      Join call
+                    </a>
+                  )}
                   <a className="button button-secondary button-sm" href={`mailto:${b.email}?subject=${encodeURIComponent(`${b.title}`)}`}>
                     <Mail size={15} /> Email
                   </a>
