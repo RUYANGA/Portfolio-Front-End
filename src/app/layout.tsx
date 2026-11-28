@@ -105,8 +105,8 @@ export const viewport: Viewport = {
   ],
 };
 
-// Applies a saved theme before first paint, so the page never flashes the wrong colours.
-const themeScript = `document.documentElement.classList.add("js");try{var t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}`;
+// Applies theme before first paint. Default is dark on first visit; user choice persists.
+const themeScript = `document.documentElement.classList.add("js");try{var t=localStorage.getItem("theme");document.documentElement.dataset.theme=(t==="light"||t==="dark")?t:"dark"}catch(e){document.documentElement.dataset.theme="dark"}`;
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const jsonLd = await structuredData();
