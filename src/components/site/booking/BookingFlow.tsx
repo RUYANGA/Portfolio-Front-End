@@ -529,10 +529,9 @@ export default function BookingFlow({ apiUrl, info, owner, initialType, siteUrl 
               <input id="bk-company" name="company" autoComplete="organization" maxLength={120} />
             </div>
             <div className="field">
-              <label htmlFor="bk-notes">
-                What would you like to discuss? <span className="bk-optional">optional</span>
-              </label>
-              <textarea id="bk-notes" name="notes" maxLength={2000} placeholder="A role, a project, or anything I can prepare for." />
+              <label htmlFor="bk-notes">What would you like to discuss?</label>
+              <textarea id="bk-notes" name="notes" required maxLength={2000} aria-invalid={!!errors.notes} placeholder="A role, a project, or anything I can prepare for." />
+              {errors.notes && <span className="field-error">{errors.notes}</span>}
             </div>
             <div className="honeypot" aria-hidden="true">
               <label htmlFor="bk-website">Leave this empty</label>
