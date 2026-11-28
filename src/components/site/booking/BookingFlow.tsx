@@ -558,33 +558,6 @@ export default function BookingFlow({ apiUrl, info, owner, initialType, siteUrl 
 }
 
 
-function calendarStamp(iso: string) {
-  return new Date(iso).toISOString().replace(/[-:]/g, "").replace(/\.\d{3}Z$/, "Z");
-}
-
-function googleCalendarUrl(result: BookingResult, owner: string) {
-  const params = new URLSearchParams({
-    action: "TEMPLATE",
-    text: `${result.title} with ${owner}`,
-    dates: `${calendarStamp(result.start)}/${calendarStamp(result.end)}`,
-    details: `Booking confirmation for ${result.title}.`,
-    location: result.meeting_link || "Video call",
-  });
-  return `https://calendar.google.com/calendar/render?${params.toString()}`;
-}
-
-function outlookCalendarUrl(result: BookingResult, owner: string) {
-  const params = new URLSearchParams({
-    path: "/calendar/action/compose",
-    rru: "addevent",
-    subject: `${result.title} with ${owner}`,
-    startdt: new Date(result.start).toISOString(),
-    enddt: new Date(result.end).toISOString(),
-    body: `Booking confirmation for ${result.title}.`,
-    location: result.meeting_link || "Video call",
-  });
-  return `https://outlook.live.com/calendar/0/deeplink/compose?${params.toString()}`;
-}
 function Confirmation({ result, tz, hour12, owner }: { result: BookingResult; tz: string; hour12: boolean; owner: string }) {
   const start = new Date(result.start);
   const end = new Date(result.end);
@@ -596,7 +569,7 @@ function Confirmation({ result, tz, hour12, owner }: { result: BookingResult; tz
       </svg>
       <h3>You&apos;re booked, {result.name.split(" ")[0]}</h3>
       <p className="bk-muted">
-        A confirmation email with a calendar invitation was sent to <strong>{result.email}</strong>.
+        A confirmation email with your calendar invitation and video call link was sent to <strong>{result.email}</strong>.
       </p>
       <dl className="bk-done-details">
         <div>
@@ -615,13 +588,9 @@ function Confirmation({ result, tz, hour12, owner }: { result: BookingResult; tz
         </div>
         <div>
           <dt>Where</dt>
-          <dd>{result.meeting_link ? <a href={result.meeting_link}>{result.meeting_link.replace(/^https?:\/\//, "")}</a> : "Video call link will be shared by email"}</dd>
+          <dd>{result.meeting_link ? <a href={result.meeting_link}>Join video call</a> : "Video call link will be shared by email"}</dd>
         </div>
       </dl>
-      <div className="actions" style={{ marginTop: "1rem", gap: ".75rem", flexWrap: "wrap" }}>
-        <a className="button button-secondary button-sm" href={googleCalendarUrl(result, owner)}>Add to Google Calendar</a>
-        <a className="button button-secondary button-sm" href={outlookCalendarUrl(result, owner)}>Add to Outlook</a>
-      </div>
       <p className="bk-muted bk-small">
         Need to cancel? <Link href={`/book/manage/${result.manage_token}`}>Manage this booking</Link>. The link is in your email too.
       </p>
