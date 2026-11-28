@@ -164,7 +164,7 @@ export default function Header({ name, cvUrl }: { name: string; cvUrl: string })
               {l.label}
             </Link>
           ))}
-          <ResumeButton url={cvUrl} label="Download résumé" className="button button-primary" onOpen={() => setOpen(false)} />
+          <ResumeButton url={cvUrl} label="View Resume" className="button button-primary" onOpen={() => setOpen(false)} />
         </nav>
       </div>
     </header>
