@@ -232,7 +232,7 @@ export default async function HomePage() {
                     <dd>{profile.available_for_work ? "Open to new roles" : "Not looking right now"}</dd>
                   </div>
                 </dl>
-                <ResumeButton url={cvUrl} label="View résumé" className="button button-secondary button-block" />
+                <ResumeButton url={cvUrl} label="View Resume" className="button button-secondary button-block" />
               </aside>
             </div>
           </div>

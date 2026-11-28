@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowUpRight, Download } from "@/components/ui/Icons";
+import { ArrowUpRight, Download, Eye } from "@/components/ui/Icons";
 import Modal from "@/components/ui/Modal";
 import { track } from "@/lib/analytics";
 
@@ -14,10 +14,10 @@ type Props = {
 };
 
 /**
- * Résumé button. On larger screens it previews the PDF in a dialog with download options;
+ * Resume button. On larger screens it previews the PDF in a dialog with download options;
  * on phones (where embedded PDFs work poorly) and without JavaScript it simply downloads.
  */
-export default function ResumeButton({ url, label = "Résumé", className = "button button-primary", iconSize = 16, onOpen }: Props) {
+export default function ResumeButton({ url, label = "Resume", className = "button button-primary", iconSize = 16, onOpen }: Props) {
   const [open, setOpen] = useState(false);
   const fileName = decodeURIComponent(url.split("/").pop() || "resume.pdf");
 
@@ -35,13 +35,13 @@ export default function ResumeButton({ url, label = "Résumé", className = "but
           setOpen(true);
         }}
       >
-        <Download size={iconSize} />
+        <Eye size={iconSize} />
         {label}
       </a>
       <Modal
         open={open}
         onClose={() => setOpen(false)}
-        title="Résumé"
+        title="Resume"
         description={fileName}
         size="xl"
         flush
@@ -56,7 +56,7 @@ export default function ResumeButton({ url, label = "Résumé", className = "but
           </>
         }
       >
-        <iframe className="resume-frame" src={`${url}#view=FitH`} title="Résumé preview" />
+        <iframe className="resume-frame" src={`${url}#view=FitH`} title="Resume preview" />
       </Modal>
     </>
   );
