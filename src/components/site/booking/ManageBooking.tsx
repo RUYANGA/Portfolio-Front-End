@@ -11,10 +11,13 @@ export default function ManageBooking({ apiUrl, token, owner }: { apiUrl: string
   const [booking, setBooking] = useState<BookingResult | null>(null);
   const [error, setError] = useState("");
   const [cancelling, setCancelling] = useState(false);
+  const [connecting, setConnecting] = useState(false);
   const [tz, setTz] = useState("UTC");
+  const [gcal, setGcal] = useState("");
 
   useEffect(() => {
     setTz(Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC");
+    setGcal(new URLSearchParams(window.location.search).get("gcal") || "");
     fetch(api, { cache: "no-store" })
       .then(async (res) => {
         if (res.status === 404) throw new Error("This booking link isn't valid. Check the link in your email.");
@@ -45,6 +48,20 @@ export default function ManageBooking({ apiUrl, token, owner }: { apiUrl: string
     }
   }
 
+  async function addToGoogleCalendar() {
+    setConnecting(true);
+    setError("");
+    try {
+      const res = await fetch(`${api}google/connect/`, { method: "POST" });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.url) throw new Error(data.detail || "Google Calendar could not be connected.");
+      window.location.href = data.url as string;
+    } catch (e) {
+      setError((e as Error).message);
+      setConnecting(false);
+    }
+  }
+
   if (error && !booking) {
     return (
       <div className="bk-manage">
@@ -67,6 +84,8 @@ export default function ManageBooking({ apiUrl, token, owner }: { apiUrl: string
       <h2>
         {booking.title} with {owner}
       </h2>
+      {gcal === "added" && !cancelled && <p className="form-status form-status-ok" role="status">Added to your Google Calendar.</p>}
+      {gcal === "error" && <p className="form-status" role="alert">Google Calendar could not be connected. Please try again.</p>}
       <dl className="bk-done-details">
         <div>
           <dt>When</dt>
@@ -101,7 +120,15 @@ export default function ManageBooking({ apiUrl, token, owner }: { apiUrl: string
           </Link>
         </>
       ) : booking.can_cancel ? (
-        <form className="form bk-cancel" onSubmit={cancel}>
+        <>
+          {booking.google_calendar_connected && (
+            <div className="bk-done-actions" style={{ marginBottom: 16 }}>
+              <button type="button" className="button button-secondary" onClick={addToGoogleCalendar} disabled={connecting}>
+                {connecting ? "Connecting…" : "Add to Google Calendar"}
+              </button>
+            </div>
+          )}
+          <form className="form bk-cancel" onSubmit={cancel}>
           <div className="field">
             <label htmlFor="bk-reason">
               Reason for cancelling <span className="bk-optional">optional</span>
@@ -122,6 +149,7 @@ export default function ManageBooking({ apiUrl, token, owner }: { apiUrl: string
             </Link>
           </div>
         </form>
+        </>
       ) : (
         <p className="bk-muted">This meeting has already started, so it can no longer be cancelled here. Reply to your invitation email instead.</p>
       )}
