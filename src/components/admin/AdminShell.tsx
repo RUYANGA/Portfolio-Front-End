@@ -102,13 +102,40 @@ export default function AdminShell(props: { user: AdminUser; owner: string; coun
   );
 }
 
-function Shell({ user, owner, counts, children }: { user: AdminUser; owner: string; counts: NavCounts; children: React.ReactNode }) {
+function Shell({ user, owner, counts: initialCounts, children }: { user: AdminUser; owner: string; counts: NavCounts; children: React.ReactNode }) {
   const displayName = owner || user.name;
   const initials = displayName.split(" ").filter(Boolean).slice(0, 2).map((w) => w[0]?.toUpperCase()).join("") || "P";
   const pathname = usePathname();
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
+  const [counts, setCounts] = useState(initialCounts);
+
+  useEffect(() => setCounts(initialCounts), [initialCounts]);
+
+  useEffect(() => {
+    let active = true;
+    const refresh = async () => {
+      if (document.visibilityState !== "visible") return;
+      try {
+        const res = await fetch("/admin-api/overview/", { cache: "no-store" });
+        if (!res.ok || !active) return;
+        const data = await res.json();
+        if (data?.counts && active) setCounts(data.counts);
+      } catch {
+        /* keep last known counts */
+      }
+    };
+    const id = window.setInterval(refresh, 20000);
+    window.addEventListener("focus", refresh);
+    document.addEventListener("visibilitychange", refresh);
+    return () => {
+      active = false;
+      window.clearInterval(id);
+      window.removeEventListener("focus", refresh);
+      document.removeEventListener("visibilitychange", refresh);
+    };
+  }, []);
 
   useEffect(() => setOpen(false), [pathname]);
 

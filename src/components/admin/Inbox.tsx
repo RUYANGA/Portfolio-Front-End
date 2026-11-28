@@ -21,7 +21,38 @@ export default function Inbox() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    adminFetch<Message[]>("messages/").then(setMessages).catch((e: ApiError) => setError(e.message));
+    let active = true;
+    let first = true;
+    const load = async () => {
+      if (document.visibilityState !== "visible" && !first) return;
+      try {
+        const data = await adminFetch<Message[]>("messages/");
+        if (!active) return;
+        setMessages((prev) => {
+          if (!prev) return data;
+          const prevIds = prev.map((m) => m.id).join(",");
+          const nextIds = data.map((m) => m.id).join(",");
+          const prevRead = prev.map((m) => `${m.id}:${m.is_read}`).join(",");
+          const nextRead = data.map((m) => `${m.id}:${m.is_read}`).join(",");
+          return prevIds === nextIds && prevRead === nextRead ? prev : data;
+        });
+        setError("");
+      } catch (e) {
+        if (active) setError((e as ApiError).message);
+      } finally {
+        first = false;
+      }
+    };
+    load();
+    const id = window.setInterval(load, 15000);
+    window.addEventListener("focus", load);
+    document.addEventListener("visibilitychange", load);
+    return () => {
+      active = false;
+      window.clearInterval(id);
+      window.removeEventListener("focus", load);
+      document.removeEventListener("visibilitychange", load);
+    };
   }, []);
 
   const list = useMemo(() => (messages ?? []).filter((m) => filter === "all" || !m.is_read), [messages, filter]);
