@@ -67,10 +67,32 @@ export default function BookingsManager() {
   }, []);
 
   useEffect(() => {
+    let active = true;
+    let first = true;
+    const load = async () => {
+      if (document.visibilityState !== "visible" && !first) return;
+      try {
+        const data = await adminFetch<Booking[]>(`booking/bookings/?when=${period}`);
+        if (!active) return;
+        setBookings(data);
+        setError("");
+      } catch (e) {
+        if (active) setError((e as ApiError).message);
+      } finally {
+        first = false;
+      }
+    };
     setBookings(null);
-    adminFetch<Booking[]>(`booking/bookings/?when=${period}`)
-      .then(setBookings)
-      .catch((e: ApiError) => setError(e.message));
+    load();
+    const id = window.setInterval(load, 15000);
+    window.addEventListener("focus", load);
+    document.addEventListener("visibilitychange", load);
+    return () => {
+      active = false;
+      window.clearInterval(id);
+      window.removeEventListener("focus", load);
+      document.removeEventListener("visibilitychange", load);
+    };
   }, [period]);
 
   const groups = useMemo(() => {
